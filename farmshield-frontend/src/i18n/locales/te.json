@@ -1,0 +1,142 @@
+{
+  "app": {
+    "setupBanner": "ప్రారంభించడానికి మీ API కనెక్షన్‌ను కాన్ఫిగర్ చేయండి",
+    "brand": "FarmShield",
+    "primaryNav": "ప్రధాన నావిగేషన్"
+  },
+  "nav": {
+    "dashboard": "డ్యాష్‌బోర్డ్",
+    "history": "చరిత్ర",
+    "alerts": "అలర్ట్‌లు",
+    "controls": "నియంత్రణలు",
+    "settings": "సెట్టింగ్స్"
+  },
+  "sensors": {
+    "soil": "మట్టి తేమ",
+    "ph": "pH స్థాయి",
+    "tds": "నీటి TDS",
+    "temp": "ఉష్ణోగ్రత",
+    "humidity": "ఆర్ద్రత",
+    "rain": "వర్షం",
+    "motion": "దూరిన చలనం",
+    "npkN": "నైట్రజన్",
+    "npkP": "ఫాస్ఫరస్",
+    "npkK": "పొటాషియం",
+    "leafColor": "ఆకు ఆరోగ్యం",
+    "units": {
+      "percent": "%",
+      "ph": "pH",
+      "ppm": "ppm",
+      "celsius": "°C",
+      "rain": "మిమీ",
+      "none": ""
+    }
+  },
+  "status": {
+    "live": "లైవ్",
+    "polling": "పోలింగ్",
+    "offline": "ఆఫ్లైన్",
+    "connecting": "కనెక్ట్ అవుతోంది",
+    "pumpOn": "పంప్ ఆన్",
+    "pumpOff": "పంప్ ఆఫ్",
+    "autoMode": "ఆటో మోడ్",
+    "manualMode": "మాన్యువల్ మోడ్",
+    "healthy": "ఆరోగ్యంగా",
+    "warning": "హెచ్చరిక",
+    "critical": "తీవ్రం",
+    "motion": "చలనం గుర్తించబడింది",
+    "noMotion": "స్పష్టంగా ఉంది"
+  },
+  "controls": {
+    "pump": "వాటర్ పంప్",
+    "turnOn": "ఆన్ చేయి",
+    "turnOff": "ఆఫ్ చేయి",
+    "mode": "కంట్రోల్ మోడ్",
+    "auto": "ఆటోమేటిక్",
+    "manual": "మాన్యువల్",
+    "buzzer": "అలారం",
+    "silence": "అలారం మ్యూట్ చేయి",
+    "manualWarning": "మాన్యువల్ మోడ్ యాక్టివ్‌లో ఉంది — ఆటో నీరుపారుదల నిలిపివేయబడింది",
+    "quickTitle": "త్వరిత నియంత్రణలు",
+    "lastCommand": "చివరి కమాండ్",
+    "sending": "కమాండ్ పంపిస్తోంది"
+  },
+  "alerts": {
+    "title": "అలర్ట్‌లు",
+    "acknowledge": "అంగీకరించు",
+    "noAlerts": "అలర్ట్‌లు లేవు",
+    "noAlertsDesc": "మీ పంటలు ఆరోగ్యంగా ఉన్నాయి",
+    "filter": {
+      "all": "అన్నీ",
+      "warning": "హెచ్చరిక",
+      "critical": "తీవ్రం",
+      "unread": "చదవని"
+    }
+  },
+  "history": {
+    "title": "సెన్సర్ చరిత్ర",
+    "export": "CSV ఎగుమతి",
+    "selectSensors": "గరిష్టంగా 3 సెన్సర్లను ఎంచుకోండి",
+    "range": {
+      "1h": "1 గంట",
+      "6h": "6 గంటలు",
+      "24h": "24 గంటలు",
+      "7d": "7 రోజులు"
+    }
+  },
+  "settings": {
+    "title": "సెట్టింగ్స్",
+    "apiUrl": "API సర్వర్ URL",
+    "apiKey": "API కీ",
+    "deviceId": "డివైస్ ID",
+    "testConnection": "కనెక్షన్ పరీక్షించండి",
+    "connectionOk": "కనెక్ట్ అయ్యింది",
+    "connectionFail": "సర్వర్‌ను చేరుకోలేకపోయాం",
+    "language": "భాష",
+    "save": "సెట్టింగ్స్ సేవ్ చేయి",
+    "apiPlaceholder": "http://192.168.1.50:8000",
+    "show": "చూపించు",
+    "hide": "దాచు",
+    "saved": "సెట్టింగ్స్ సేవ్ అయ్యాయి",
+    "languageShort": {
+      "en": "EN",
+      "kn": "ಕ",
+      "hi": "हि",
+      "te": "తె"
+    },
+    "languageNames": {
+      "en": "EN",
+      "kn": "ಕನ್ನಡ",
+      "hi": "हिंदी",
+      "te": "తెలుగు"
+    }
+  },
+  "dashboard": {
+    "kpi": {
+      "soil": "మట్టి తేమ",
+      "temperature": "ఉష్ణోగ్రత",
+      "pump": "పంప్ స్థితి",
+      "activeAlerts": "సక్రియ అలర్ట్‌లు"
+    },
+    "leafClassification": "వర్గీకరణ",
+    "leaf": {
+      "excellent": "చైతన్యంగా",
+      "good": "స్థిరంగా",
+      "stressed": "ఒత్తిడిలో"
+    },
+    "leafRgb": "RGB"
+  },
+  "common": {
+    "loading": "లోడ్ అవుతోంది...",
+    "error": "ఏదో తప్పు జరిగింది",
+    "retry": "మళ్లీ ప్రయత్నించండి",
+    "lastUpdated": "చివరి నవీకరణ",
+    "noData": "డేటా లేదు",
+    "unknown": "తెలియదు",
+    "info": "సమాచారం",
+    "justNow": "ఇప్పుడే",
+    "minutesAgo": "{{count}}ని క్రితం",
+    "hoursAgo": "{{count}}గం క్రితం",
+    "never": "ఎప్పుడూ కాదు"
+  }
+}

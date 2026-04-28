@@ -1,0 +1,142 @@
+{
+  "app": {
+    "setupBanner": "शुरू करने के लिए अपना API कनेक्शन कॉन्फ़िगर करें",
+    "brand": "FarmShield",
+    "primaryNav": "मुख्य नेविगेशन"
+  },
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "history": "इतिहास",
+    "alerts": "अलर्ट",
+    "controls": "कंट्रोल",
+    "settings": "सेटिंग्स"
+  },
+  "sensors": {
+    "soil": "मिट्टी की नमी",
+    "ph": "pH स्तर",
+    "tds": "पानी का TDS",
+    "temp": "तापमान",
+    "humidity": "आर्द्रता",
+    "rain": "बारिश",
+    "motion": "घुसपैठ",
+    "npkN": "नाइट्रोजन",
+    "npkP": "फॉस्फोरस",
+    "npkK": "पोटैशियम",
+    "leafColor": "पत्ती स्वास्थ्य",
+    "units": {
+      "percent": "%",
+      "ph": "pH",
+      "ppm": "ppm",
+      "celsius": "°C",
+      "rain": "मिमी",
+      "none": ""
+    }
+  },
+  "status": {
+    "live": "लाइव",
+    "polling": "पोलिंग",
+    "offline": "ऑफलाइन",
+    "connecting": "कनेक्ट हो रहा है",
+    "pumpOn": "पंप चालू",
+    "pumpOff": "पंप बंद",
+    "autoMode": "ऑटो मोड",
+    "manualMode": "मैनुअल मोड",
+    "healthy": "स्वस्थ",
+    "warning": "चेतावनी",
+    "critical": "गंभीर",
+    "motion": "गतिविधि मिली",
+    "noMotion": "साफ"
+  },
+  "controls": {
+    "pump": "वॉटर पंप",
+    "turnOn": "चालू करें",
+    "turnOff": "बंद करें",
+    "mode": "कंट्रोल मोड",
+    "auto": "स्वचालित",
+    "manual": "मैनुअल",
+    "buzzer": "अलार्म",
+    "silence": "अलार्म शांत करें",
+    "manualWarning": "मैनुअल मोड सक्रिय है — ऑटो सिंचाई बंद है",
+    "quickTitle": "त्वरित नियंत्रण",
+    "lastCommand": "पिछला कमांड",
+    "sending": "कमांड भेजा जा रहा है"
+  },
+  "alerts": {
+    "title": "अलर्ट",
+    "acknowledge": "स्वीकार करें",
+    "noAlerts": "कोई अलर्ट नहीं",
+    "noAlertsDesc": "आपकी फसलें स्वस्थ दिख रही हैं",
+    "filter": {
+      "all": "सभी",
+      "warning": "चेतावनी",
+      "critical": "गंभीर",
+      "unread": "अपठित"
+    }
+  },
+  "history": {
+    "title": "सेंसर इतिहास",
+    "export": "CSV निर्यात",
+    "selectSensors": "अधिकतम 3 सेंसर चुनें",
+    "range": {
+      "1h": "1 घंटा",
+      "6h": "6 घंटे",
+      "24h": "24 घंटे",
+      "7d": "7 दिन"
+    }
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "apiUrl": "API सर्वर URL",
+    "apiKey": "API कुंजी",
+    "deviceId": "डिवाइस ID",
+    "testConnection": "कनेक्शन जांचें",
+    "connectionOk": "कनेक्टेड",
+    "connectionFail": "सर्वर तक पहुंच नहीं हो सकी",
+    "language": "भाषा",
+    "save": "सेटिंग्स सहेजें",
+    "apiPlaceholder": "http://192.168.1.50:8000",
+    "show": "दिखाएं",
+    "hide": "छिपाएं",
+    "saved": "सेटिंग्स सहेजी गईं",
+    "languageShort": {
+      "en": "EN",
+      "kn": "ಕ",
+      "hi": "हि",
+      "te": "తె"
+    },
+    "languageNames": {
+      "en": "EN",
+      "kn": "ಕನ್ನಡ",
+      "hi": "हिंदी",
+      "te": "తెలుగు"
+    }
+  },
+  "dashboard": {
+    "kpi": {
+      "soil": "मिट्टी की नमी",
+      "temperature": "तापमान",
+      "pump": "पंप स्थिति",
+      "activeAlerts": "सक्रिय अलर्ट"
+    },
+    "leafClassification": "वर्गीकरण",
+    "leaf": {
+      "excellent": "उत्कृष्ट",
+      "good": "स्थिर",
+      "stressed": "तनावग्रस्त"
+    },
+    "leafRgb": "RGB"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "error": "कुछ गलत हुआ",
+    "retry": "फिर कोशिश करें",
+    "lastUpdated": "अंतिम अपडेट",
+    "noData": "डेटा नहीं",
+    "unknown": "अज्ञात",
+    "info": "जानकारी",
+    "justNow": "अभी",
+    "minutesAgo": "{{count}}मि पहले",
+    "hoursAgo": "{{count}}घं पहले",
+    "never": "कभी नहीं"
+  }
+}
