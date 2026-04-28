@@ -29,3 +29,9 @@ router.include_router(ws.router)
 if settings.chat_enabled:
     from app.api.v1 import chat  # noqa: E402 — conditional import is intentional
     router.include_router(chat.router)
+
+# Audio Pest Detection — conditionally registered
+if settings.audio_enabled:
+    from app.api.v1 import audio  # noqa: E402 — conditional import is intentional
+    router.include_router(audio.router)
+

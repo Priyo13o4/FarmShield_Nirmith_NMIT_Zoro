@@ -101,6 +101,11 @@ export default function Dashboard() {
     setPendingAction(nextMode)
 
     try {
+      if (nextMode === 'AUTO' && pumpMode === 'MANUAL' && pumpOn) {
+        // Turn off pump before switching to AUTO to prevent ESP32 stress
+        await commandPump('OFF')
+        await new Promise((resolve) => setTimeout(resolve, 500))
+      }
       await commandMode(nextMode)
     } catch (_error) {
       setErrorMessage(t('common.error'))
@@ -136,7 +141,7 @@ export default function Dashboard() {
               type="button"
               className={`btn ${pumpOn ? 'btn-ghost' : 'btn-success'}`}
               onClick={() => handlePumpCommand(pumpOn ? 'OFF' : 'ON')}
-              disabled={isLoading || Boolean(pendingAction)}
+              disabled={isLoading || Boolean(pendingAction) || pumpMode === 'AUTO'}
             >
               {pendingAction === 'ON' || pendingAction === 'OFF' ? (
                 <span className="inline-spinner" aria-hidden="true" />

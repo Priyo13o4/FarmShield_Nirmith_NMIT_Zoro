@@ -26,6 +26,7 @@ export default function Alerts() {
     alerts: liveAlerts,
     clearUnread,
     acknowledgeAlertLocal,
+    activeNodeId,
   } = useFarm()
 
   const [serverAlerts, setServerAlerts] = useState([])
@@ -47,7 +48,7 @@ export default function Alerts() {
 
       try {
         const response = await api.alerts.list({
-          deviceId: getDeviceId(),
+          deviceId: activeNodeId,
           limit: 100,
           unacknowledgedOnly: false,
         })
@@ -71,7 +72,7 @@ export default function Alerts() {
     return () => {
       mounted = false
     }
-  }, [t])
+  }, [t, activeNodeId])
 
   const combinedAlerts = useMemo(
     () => mergeAlerts(serverAlerts, liveAlerts),
@@ -118,16 +119,6 @@ export default function Alerts() {
     }
   }
 
-  if (!isLoading && !filteredAlerts.length) {
-    return (
-      <EmptyState
-        icon={ShieldCheck}
-        title={t('alerts.noAlerts')}
-        description={t('alerts.noAlertsDesc')}
-      />
-    )
-  }
-
   return (
     <section className="page-stack" aria-label={t('alerts.title')}>
       <div className="pill-row">
@@ -145,16 +136,24 @@ export default function Alerts() {
 
       {errorMessage ? <div className="inline-message error">{errorMessage}</div> : null}
 
-      <div className="alert-list">
-        {filteredAlerts.map((alert) => (
-          <AlertRow
-            key={alert.id || `${alert.timestamp}-${alert.message}`}
-            alert={alert}
-            onAcknowledge={handleAcknowledge}
-            isSubmitting={acknowledgingId === String(alert.id)}
-          />
-        ))}
-      </div>
+      {!isLoading && !combinedAlerts.length ? (
+        <EmptyState
+          icon={ShieldCheck}
+          title={t('alerts.noAlerts')}
+          description={t('alerts.noAlertsDesc')}
+        />
+      ) : (
+        <div className="alert-list">
+          {filteredAlerts.map((alert) => (
+            <AlertRow
+              key={alert.id || `${alert.timestamp}-${alert.message}`}
+              alert={alert}
+              onAcknowledge={handleAcknowledge}
+              isSubmitting={acknowledgingId === String(alert.id)}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }

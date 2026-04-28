@@ -94,6 +94,12 @@ class Settings(BaseSettings):
     chat_db_readonly_user: str = "farmshield_readonly"
     chat_db_readonly_password: str = "readonly123"
 
+    # ── Audio Pest Detection ────────────────────────────────────────────
+    audio_enabled: bool = False
+    audio_mqtt_topic: str = "farmshield/audio"
+    audio_alert_threshold: float = 0.75
+    audio_publish_interval_s: int = 10
+
     @property
     def chat_db_readonly_url(self) -> str:
         """Sync DB URL for LangChain SQLDatabase (uses psycopg2, not asyncpg)."""

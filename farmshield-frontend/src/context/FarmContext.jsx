@@ -52,11 +52,23 @@ function derivePumpMode(sensorData, fallbackMode) {
   return sensorData.mode || sensorData.pumpMode || sensorData.controlMode || fallbackMode
 }
 
+function parseBoolean(val) {
+  if (val === '0' || val === 0 || val === 'false' || val === 'OFF' || val === 'off' || val === false) {
+    return false
+  }
+  if (val === '1' || val === 1 || val === 'true' || val === 'ON' || val === 'on' || val === true) {
+    return true
+  }
+  return Boolean(val)
+}
+
 function toUiSensorShape(data) {
   if (!data) {
     return null
   }
 
+  const pumpOnVal = data.pumpOn ?? data.pumpon ?? data.pumpState
+  
   return {
     ...data,
     soilPct: data.soilPct ?? data.soilpct ?? data.soil ?? data.soilMoisturePct,
@@ -72,7 +84,7 @@ function toUiSensorShape(data) {
     leafR: data.leafR ?? data.leafr ?? data.leaf_r,
     leafG: data.leafG ?? data.leafg ?? data.leaf_g,
     leafB: data.leafB ?? data.leafb ?? data.leaf_b,
-    pumpOn: data.pumpOn ?? data.pumpon ?? data.pumpState === 'ON',
+    pumpOn: parseBoolean(pumpOnVal),
   }
 }
 
@@ -344,7 +356,7 @@ export function FarmProvider({ children }) {
   }, [startPolling, stopPolling, activeNodeId])
 
   const commandPump = useCallback(async (nextState) => {
-    await api.control.pump(nextState)
+    // Optimistic update
     dispatch({
       type: ACTIONS.PATCH_SENSOR_DATA,
       payload: {
@@ -353,10 +365,17 @@ export function FarmProvider({ children }) {
         pumpState: nextState,
       },
     })
-  }, [])
+
+    try {
+      await api.control.pump(nextState)
+    } catch (error) {
+      refreshAllNodes() // Rollback
+      throw error
+    }
+  }, [refreshAllNodes])
 
   const commandMode = useCallback(async (nextMode) => {
-    await api.control.mode(nextMode)
+    // Optimistic update
     dispatch({ type: ACTIONS.SET_PUMP_MODE, payload: nextMode })
     dispatch({
       type: ACTIONS.PATCH_SENSOR_DATA,
@@ -364,7 +383,14 @@ export function FarmProvider({ children }) {
         controlMode: nextMode,
       },
     })
-  }, [])
+
+    try {
+      await api.control.mode(nextMode)
+    } catch (error) {
+      refreshAllNodes() // Rollback
+      throw error
+    }
+  }, [refreshAllNodes])
 
   const silenceBuzzer = useCallback(async () => {
     await api.control.buzzer()

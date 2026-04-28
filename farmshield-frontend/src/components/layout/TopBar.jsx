@@ -76,17 +76,19 @@ export default function TopBar() {
         )}
 
         {showNodeSelector && (
-          <div className="node-selector" role="group" aria-label="Select node">
-            {deviceIds.map((id) => (
-              <button
-                key={id}
-                type="button"
-                className={`node-selector-btn ${id === activeNodeId ? 'active' : ''}`}
-                onClick={() => switchActiveNode(id)}
-              >
-                {id}
-              </button>
-            ))}
+          <div className="node-select-wrap">
+            <select
+              className="node-dropdown"
+              value={activeNodeId}
+              onChange={(e) => switchActiveNode(e.target.value)}
+              aria-label="Select active node"
+            >
+              {deviceIds.map((id) => (
+                <option key={id} value={id}>
+                  {id}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 

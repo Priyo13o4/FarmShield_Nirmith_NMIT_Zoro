@@ -65,3 +65,35 @@ async def on_message(client, topic, payload, qos, properties):
 def on_disconnect(client, packet, exc=None):
     """Log MQTT disconnections."""
     logger.warning("mqtt_disconnected", exc=str(exc) if exc else None)
+
+
+# ── Audio pest detection handler ─────────────────────────────────────────────
+from app.services import audio_inference as _audio_inference  # noqa: E402
+from app.db.session import AsyncSessionLocal  # noqa: E402
+
+if settings.audio_enabled:
+
+    @fast_mqtt.on_connect()
+    def on_audio_connect(client, flags, rc, properties):
+        """Subscribe to the audio topic on successful MQTT connection."""
+        fast_mqtt.client.subscribe(
+            settings.audio_mqtt_topic,
+            qos=settings.mqtt_qos,
+        )
+        logger.info(
+            "mqtt_audio_subscribed",
+            topic=settings.audio_mqtt_topic,
+            qos=settings.mqtt_qos,
+        )
+
+    @fast_mqtt.on_message()
+    async def on_audio_message(client, topic, payload, qos, properties):
+        if topic != settings.audio_mqtt_topic:
+            return
+        try:
+            raw = json.loads(payload.decode("utf-8"))
+            async with AsyncSessionLocal() as db:
+                await _audio_inference.process_audio(raw, db)
+        except Exception as exc:
+            logger.error("audio_handler_error", error=str(exc), exc_info=True)
+

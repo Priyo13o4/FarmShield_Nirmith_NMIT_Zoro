@@ -83,13 +83,24 @@ class MLInference(Base):
 
     __tablename__ = "ml_inferences"
 
+    # UUID primary key (for audio and future ML features)
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4
+    )
+
     # Composite ORM identity key (hypertable, no DDL PK)
     time: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), primary_key=True, nullable=False
+        DateTime(timezone=True), nullable=False
     )
-    device_id: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
+    device_id: Mapped[str] = mapped_column(Text, nullable=False)
 
     model_name: Mapped[str] = mapped_column(Text, nullable=False)
-    input_features: Mapped[dict] = mapped_column(JSONB, nullable=False)
-    output: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    input_features: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    output: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     inference_ms: Mapped[float | None] = mapped_column(Double, nullable=True)
+
+    # Audio pest detection fields (added in migration 0005)
+    prediction: Mapped[str | None] = mapped_column(Text, nullable=True)
+    confidence: Mapped[float | None] = mapped_column(Double, nullable=True)
+    raw_output: Mapped[str | None] = mapped_column(Text, nullable=True)
+
