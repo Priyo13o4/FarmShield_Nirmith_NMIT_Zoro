@@ -1514,6 +1514,143 @@ docker compose down
 
 ---
 
+---
+
+## Audio Pest Detection Feature (AUDIO_ENABLED)
+
+### Overview
+
+When `AUDIO_ENABLED=true`, FarmShield adds acoustic pest detection: the ESP32 streams FFT frequency band data via MQTT, a rule-based classifier identifies pest species (grasshopper, cricket, cicada, mosquito, or no_pest), and automated alerts + buzzer trigger on detection. Includes a demo endpoint for judge demonstrations.
+
+### Architecture
+
+**New Files Created:**
+- `app/schemas/audio.py` — AudioPayload (MQTT inbound), AudioInferenceOut (API response), DemoTriggerRequest, DemoTriggerResponse
+- `app/services/audio_inference.py` — Rule-based classifier + processing pipeline
+- `app/api/v1/audio.py` — GET /latest, GET /history, POST /demo endpoints
+
+**Modified Files:**
+- `app/config.py` — Added 4 settings: `audio_enabled`, `audio_mqtt_topic`, `audio_alert_threshold`, `audio_publish_interval_s`
+- `app/db/models.py` — MLInference model reused (stores with `model_name="audio_rule_v1"`)
+- `app/mqtt/handlers.py` — Added conditional audio MQTT handler (if `AUDIO_ENABLED=true`)
+- `app/api/v1/router.py` — Conditionally register audio router (if `AUDIO_ENABLED=true`)
+
+### Data Flow
+
+```
+ESP32 (FFT bands) 
+  ↓ (MQTT: farmshield/audio)
+handlers.py (on_audio_message)
+  ↓
+audio_inference.process_audio()
+  ├─ validate payload (AudioPayload schema)
+  ├─ classify(payload) → returns pest_class, confidence
+  ├─ persist to MLInference table (model_name="audio_rule_v1")
+  ├─ if confidence >= threshold:
+  │    ├─ publish "ON" to buzzer MQTT topic
+  │    ├─ create alert via alert.py
+  │    └─ log warning
+  └─ broadcast {type: "audio_detection", data: {...}} to WebSocket
+```
+
+### Classification Logic (Rule-Based)
+
+Classifier returns one of 5 classes based on FFT bands + dB level:
+
+| Class | Frequency Range | Rule | Confidence Formula |
+|---|---|---|---|
+| **mosquito** | < 900 Hz | `band_0 > 60 dB` | `0.70 + (band_0 / 300)` |
+| **cicada** | 900–3500 Hz | `db > 65` | `0.72 + (db / 350)` |
+| **cricket** | 3500–5500 Hz | `band_4 > 55 dB` | `0.68 + (band_4 / 280)` |
+| **grasshopper** | > 5000 Hz | `band_5 > 50 dB` | `0.71 + (band_5 / 290)` |
+| **no_pest** | any | `db < 42` (noise floor) | 0.88–0.94 (fixed) |
+
+Confidence is clamped to `[0.01, 0.99]`.
+
+### API Endpoints
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/audio/latest?deviceid=...` | Bearer | Latest audio inference |
+| `GET` | `/api/v1/audio/history?deviceid=...&limit=50&offset=0` | Bearer | Paginated history |
+| `POST` | `/api/v1/audio/demo` | Bearer | Trigger demo detection |
+
+**Demo Request:**
+```json
+{
+  "pest_class": "grasshopper",
+  "deviceid": "farmshield-node-1"
+}
+```
+
+**Demo Response:**
+```json
+{
+  "status": "ok",
+  "pest_class": "grasshopper",
+  "confidence": 0.976,
+  "alert_triggered": true,
+  "mqtt_payload_published": true
+}
+```
+
+### Configuration
+
+Add to `.env`:
+```dotenv
+AUDIO_ENABLED=true
+AUDIO_MQTT_TOPIC=farmshield/audio
+AUDIO_ALERT_THRESHOLD=0.75
+AUDIO_PUBLISH_INTERVAL_S=10
+```
+
+### Database Schema
+
+Reuses existing `MLInference` table:
+- `model_name = "audio_rule_v1"`
+- `prediction` → pest class (grasshopper, cricket, etc.)
+- `confidence` → float 0.0–1.0
+- `raw_output` → JSON with all confidence scores + `_db_level`, `_dominant_freq_hz`
+
+No new table or migration required.
+
+### Field Name Conventions
+
+**Note on `deviceid` vs `device_id`:**
+- **MQTT/Wire Format**: Uses `deviceid` (ESP32 hardware convention)
+- **ORM/Database**: Uses `device_id` (FarmShield schema convention)
+- **Schema Layer**: AudioPayload field is `deviceid`, converted to `device_id` for ORM
+
+This dual naming is intentional — hardware protocols rarely match database naming.
+
+### WebSocket Broadcast
+
+When a pest is detected, all connected WebSocket clients receive:
+```json
+{
+  "type": "audio_detection",
+  "data": {
+    "id": "uuid",
+    "time": "2026-04-28T23:00:00Z",
+    "deviceid": "farmshield-node-1",
+    "pest_class": "grasshopper",
+    "confidence": 0.976,
+    "db_level": 74.3,
+    "dominant_freq_hz": 5820.5,
+    "all_scores": {
+      "grasshopper": 0.976,
+      "no_pest": 0.024,
+      "cricket": 0.01,
+      "cicada": 0.01,
+      "mosquito": 0.01
+    },
+    "alert_triggered": true
+  }
+}
+```
+
+---
+
 ## Summary: File Control Map
 
 | What | Where | Key Files |
@@ -1528,6 +1665,7 @@ docker compose down
 | **Alerts** | `services/alert.py` | Threshold evaluation |
 | **ML (optional)** | `services/ml/runner.py` | Load & inference |
 | **Chat (optional)** | `services/chat/` | RAG, SQL tools, agent |
+| **Audio (optional)** | `services/audio_inference.py`, `api/v1/audio.py` | Acoustic pest detection |
 | **WebSocket** | `services/websocket.py`, `api/v1/ws.py` | Broadcast |
 | **Auth** | `core/auth.py` | Bearer token validation |
 | **Logging** | `core/logging.py` | Structured logging setup |

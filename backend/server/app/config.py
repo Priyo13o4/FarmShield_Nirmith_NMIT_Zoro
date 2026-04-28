@@ -94,6 +94,13 @@ class Settings(BaseSettings):
     chat_db_readonly_user: str = "farmshield_readonly"
     chat_db_readonly_password: str = "readonly123"
 
+    # ── Voice Chat ───────────────────────────────────────────────────────
+    voice_enabled: bool = False
+    voice_model: str = "gemini-2.5-flash-native-audio-latest"
+    voice_max_turn_seconds: int = 60
+    voice_silence_timeout_ms: int = 1500
+    voice_system_prompt_override: str = ""
+
     # ── Audio Pest Detection ────────────────────────────────────────────
     audio_enabled: bool = False
     audio_mqtt_topic: str = "farmshield/audio"

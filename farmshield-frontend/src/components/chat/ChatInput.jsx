@@ -1,7 +1,7 @@
 import { Loader2, Send } from 'lucide-react'
 import { useRef } from 'react'
 
-export default function ChatInput({ onSend, disabled, placeholder }) {
+export default function ChatInput({ onSend, disabled, placeholder, isVoiceActive, onVoiceToggle }) {
   const textareaRef = useRef(null)
 
   const adjustHeight = () => {
@@ -43,21 +43,27 @@ export default function ChatInput({ onSend, disabled, placeholder }) {
       alignItems: 'flex-end',
       gap: '0.75rem',
       background: 'var(--color-surface)',
-      border: '1px solid var(--border-color)',
+      border: isVoiceActive ? '1px solid var(--color-danger, #ef4444)' : '1px solid var(--border-color)',
       borderRadius: '12px',
       padding: '0.75rem 1.25rem',
       maxWidth: '900px',
       width: '100%',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+      boxShadow: isVoiceActive 
+        ? '0 0 15px rgba(239, 68, 68, 0.4)' 
+        : '0 10px 30px rgba(0, 0, 0, 0.15)',
       transition: 'all 0.3s ease',
     }}
     onFocus={(e) => {
-      e.currentTarget.style.borderColor = 'var(--color-primary)'
-      e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(251, 191, 36, 0.1)'
+      if (!isVoiceActive) {
+        e.currentTarget.style.borderColor = 'var(--color-primary)'
+        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(251, 191, 36, 0.1)'
+      }
     }}
     onBlur={(e) => {
-      e.currentTarget.style.borderColor = 'var(--border-color)'
-      e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15)'
+      if (!isVoiceActive) {
+        e.currentTarget.style.borderColor = 'var(--border-color)'
+        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15)'
+      }
     }}
     >
       <textarea
@@ -77,10 +83,10 @@ export default function ChatInput({ onSend, disabled, placeholder }) {
           fontFamily: 'inherit',
           WebkitFontSmoothing: 'antialiased',
         }}
-        placeholder={placeholder}
+        placeholder={isVoiceActive ? 'Listening...' : placeholder}
         onKeyDown={handleKeyDown}
         onChange={handleChange}
-        disabled={disabled}
+        disabled={disabled || isVoiceActive}
         rows={1}
         spellCheck="true"
       />
@@ -119,6 +125,41 @@ export default function ChatInput({ onSend, disabled, placeholder }) {
           <Send className="w-4 h-4" />
         )}
       </button>
+      
+      {onVoiceToggle && (
+        <button
+          onClick={onVoiceToggle}
+          disabled={disabled && !isVoiceActive}
+          style={{
+            background: isVoiceActive ? 'var(--color-danger, #ef4444)' : 'transparent',
+            color: isVoiceActive ? 'white' : 'var(--text-color-muted)',
+            border: isVoiceActive ? 'none' : '1px solid var(--border-color)',
+            borderRadius: '50%',
+            padding: '0.625rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: (disabled && !isVoiceActive) ? 'not-allowed' : 'pointer',
+            opacity: (disabled && !isVoiceActive) ? 0.6 : 1,
+            transition: 'all 0.2s ease',
+            flexShrink: 0,
+            width: '40px',
+            height: '40px'
+          }}
+          title={isVoiceActive ? 'Stop Recording' : 'Start Voice Chat'}
+        >
+          {isVoiceActive ? (
+            <span style={{ display: 'block', width: '12px', height: '12px', background: 'white', borderRadius: '2px' }} />
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="22"></line>
+            </svg>
+          )}
+        </button>
+      )}
+
     </div>
   )
 }

@@ -23,6 +23,8 @@ chat = [
     "langchain-community>=0.3.0",
     "faiss-cpu>=1.9.0",
     "psycopg2-binary>=2.9.0",   # sync driver required by LangChain SQLDatabase
+    "websockets>=12.0",
+    "google-genai>=1.0.0",
 ]
 dev = [
     "pytest>=8.0.0",

@@ -50,10 +50,10 @@ Rules:
 4. Use sql_database_schema first if you are unsure of column names or data types.
 5. Keep answers concise and actionable. Farmers want facts and clear next steps, not essays.
 6. If a question is completely unrelated to agriculture or this farm, politely decline.
-7. Default device_id for all queries: {device_id}
-8. The sensor_readings table contains: time, device_id, soil_pct, temperature_c, humidity_pct, \
-ph, tds_ppm, rain_raw, nitrogen_mgkg, phosphorus_mgkg, potassium_mgkg, leaf_color, pump_state.
+7. If the user does not specify a device, you MUST look up the available device_ids in the sensor_readings table first (e.g. SELECT DISTINCT device_id FROM sensor_readings). Do NOT use {device_id} to query sensor data, as that is the backend server's ID.
+8. The sensor_readings table contains: time (TIMESTAMP WITH TIME ZONE), device_id (TEXT), soil_pct, ph, tds_ppm, temp_c, humidity_pct, rain_raw, motion (BOOLEAN), npk_n, npk_p, npk_k, leaf_r, leaf_g, leaf_b, pump_on (BOOLEAN), mode (TEXT), uptime_s, npk_ok (BOOLEAN).
 9. The alerts table contains: id, time, device_id, alert_type, severity, value, threshold, message.
+10. You are a highly capable multilingual assistant. You MUST detect and respond in the EXACT same language used by the user in their most recent message. If the user switches from one language to another, you must switch to that language immediately. Do not be biased by previous language history.
 """
 
 
@@ -68,16 +68,6 @@ class FarmShieldAgent:
     def load(self, sql_tools: list, rag_tool, settings) -> None:
         """
         Initialise the agent with tools and LLM.
-        Called once during app lifespan startup when CHAT_ENABLED=true.
-
-        Uses langchain.agents.create_agent (LangChain 1.2.x) which builds a
-        LangGraph CompiledStateGraph. The graph uses Gemini's native function
-        calling — no text-based ReAct prompting needed.
-
-        Args:
-            sql_tools: [InfoSQLDatabaseTool, QuerySQLDataBaseTool]
-            rag_tool: search_farming_knowledge tool
-            settings: app settings instance
         """
         llm = ChatGoogleGenerativeAI(
             model=settings.gemini_model,
@@ -86,13 +76,12 @@ class FarmShieldAgent:
             max_output_tokens=settings.chat_max_output_tokens,
         )
 
-        # Error 3 fix: device_id from settings, not hardcoded
         self._system_message = SYSTEM_PROMPT.format(device_id=settings.mqtt_client_id)
 
-        tools = sql_tools + [rag_tool]  # [InfoSQL, QuerySQL, search_farming_knowledge]
+        self.sql_tools = sql_tools
+        self.rag_tool = rag_tool
+        tools = sql_tools + [rag_tool]
 
-        # create_agent returns a CompiledStateGraph.
-        # system_prompt is passed as a string — the graph prepends it as a SystemMessage.
         self._graph = create_agent(
             model=llm,
             tools=tools,

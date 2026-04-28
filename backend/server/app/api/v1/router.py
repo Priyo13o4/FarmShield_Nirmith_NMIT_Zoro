@@ -27,9 +27,9 @@ router.include_router(ws.router)
 # Chat — conditionally registered (Phase 8c)
 # router.py is imported after Settings() is instantiated, so this works.
 if settings.chat_enabled:
-    from app.api.v1 import chat  # noqa: E402 — conditional import is intentional
+    from app.api.v1 import chat, voice  # noqa: E402
     router.include_router(chat.router)
-
+    router.include_router(voice.router)
 # Audio Pest Detection — conditionally registered
 if settings.audio_enabled:
     from app.api.v1 import audio  # noqa: E402 — conditional import is intentional

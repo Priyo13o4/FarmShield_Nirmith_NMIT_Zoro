@@ -8,10 +8,27 @@ export default function ChatBubble({ role, content, sources, reasoning, isStream
   const isAssistant = role === 'assistant'
   const [showThinking, setShowThinking] = useState(false)
   
+  let displayContent = content || ''
+  let displayReasoning = reasoning || ''
+
+  if (isAssistant && typeof displayContent === 'string') {
+    // Check for completed thought blocks
+    const thoughtMatch = displayContent.match(/<thought>([\s\S]*?)<\/thought>/)
+    if (thoughtMatch) {
+      displayReasoning = displayReasoning ? `${displayReasoning}\n\n${thoughtMatch[1]}` : thoughtMatch[1]
+      displayContent = displayContent.replace(/<thought>[\s\S]*?<\/thought>/, '').trim()
+    } else if (displayContent.includes('<thought>')) {
+      // Handle streaming thought block
+      const parts = displayContent.split('<thought>')
+      displayContent = parts[0].trim()
+      const streamingThought = parts.slice(1).join('<thought>')
+      displayReasoning = displayReasoning ? `${displayReasoning}\n\n${streamingThought}` : streamingThought
+    }
+  }
   return (
     <div className={`chat-bubble-wrap ${role}`}>
       <div className={`chat-bubble ${role}`}>
-        {isAssistant && reasoning && (
+        {isAssistant && displayReasoning && (
           <div className="chat-reasoning-section">
             <button 
               className="chat-thinking-toggle"
@@ -23,7 +40,7 @@ export default function ChatBubble({ role, content, sources, reasoning, isStream
             </button>
             {showThinking && (
               <div className="chat-reasoning-content">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{reasoning}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayReasoning}</ReactMarkdown>
               </div>
             )}
           </div>
@@ -31,9 +48,9 @@ export default function ChatBubble({ role, content, sources, reasoning, isStream
 
         <div className="chat-bubble-content">
           {isAssistant ? (
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayContent}</ReactMarkdown>
           ) : (
-            content
+            displayContent
           )}
           {isStreaming && <span className="chat-streaming-cursor" aria-hidden="true" />}
         </div>

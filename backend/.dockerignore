@@ -1,0 +1,32 @@
+# Files not needed inside Docker container
+
+# Hardware (firmware source, not runtime needed)
+Hardware/
+
+# Documentation (reference only, not needed in container)
+docs/
+
+# Local development
+.env.local
+.venv/
+venv/
+__pycache__/
+
+# Git & tools
+.git/
+.gitignore
+.DS_Store
+*.md
+
+# IDE
+.vscode/
+.idea/
+
+# Python
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+htmlcov/

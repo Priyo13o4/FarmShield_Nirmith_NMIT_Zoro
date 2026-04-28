@@ -32,7 +32,7 @@ class AudioInferenceOut(BaseModel):
     all_scores: dict[str, float]
     alert_triggered: bool
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "populate_by_name": True}
 
 
 class DemoTriggerRequest(BaseModel):
