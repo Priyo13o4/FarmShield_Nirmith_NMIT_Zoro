@@ -1,0 +1,142 @@
+{
+  "app": {
+    "setupBanner": "ಪ್ರಾರಂಭಿಸಲು ನಿಮ್ಮ API ಸಂಪರ್ಕವನ್ನು ಸಂರಚಿಸಿ",
+    "brand": "FarmShield",
+    "primaryNav": "ಮುಖ್ಯ ನ್ಯಾವಿಗೇಶನ್"
+  },
+  "nav": {
+    "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    "history": "ಇತಿಹಾಸ",
+    "alerts": "ಎಚ್ಚರಿಕೆಗಳು",
+    "controls": "ನಿಯಂತ್ರಣಗಳು",
+    "settings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+  },
+  "sensors": {
+    "soil": "ಮಣ್ಣಿನ ತೇವಾಂಶ",
+    "ph": "pH ಮಟ್ಟ",
+    "tds": "ನೀರಿನ TDS",
+    "temp": "ತಾಪಮಾನ",
+    "humidity": "ಆದ್ರತೆ",
+    "rain": "ಮಳೆ",
+    "motion": "ನುಸುಳಿಕೆ",
+    "npkN": "ನೈಟ್ರೋಜನ್",
+    "npkP": "ಫಾಸ್ಫರಸ್",
+    "npkK": "ಪೊಟಾಷಿಯಂ",
+    "leafColor": "ಎಲೆ ಆರೋಗ್ಯ",
+    "units": {
+      "percent": "%",
+      "ph": "pH",
+      "ppm": "ppm",
+      "celsius": "°C",
+      "rain": "ಮಿಮೀ",
+      "none": ""
+    }
+  },
+  "status": {
+    "live": "ಲೈವ್",
+    "polling": "ಪೋಲಿಂಗ್",
+    "offline": "ಆಫ್‌ಲೈನ್",
+    "connecting": "ಸಂಪರ್ಕಿಸುತ್ತಿದೆ",
+    "pumpOn": "ಪಂಪ್ ಆನ್",
+    "pumpOff": "ಪಂಪ್ ಆಫ್",
+    "autoMode": "ಸ್ವಯಂಚಾಲಿತ ಮೋಡ್",
+    "manualMode": "ಕೈಯಾರೆ ಮೋಡ್",
+    "healthy": "ಆರೋಗ್ಯಕರ",
+    "warning": "ಎಚ್ಚರಿಕೆ",
+    "critical": "ತೀವ್ರ",
+    "motion": "ಚಲನೆ ಪತ್ತೆಯಾಗಿದೆ",
+    "noMotion": "ಸ್ವಚ್ಛ"
+  },
+  "controls": {
+    "pump": "ನೀರಿನ ಪಂಪ್",
+    "turnOn": "ಆನ್ ಮಾಡಿ",
+    "turnOff": "ಆಫ್ ಮಾಡಿ",
+    "mode": "ನಿಯಂತ್ರಣ ಮೋಡ್",
+    "auto": "ಸ್ವಯಂಚಾಲಿತ",
+    "manual": "ಕೈಯಾರೆ",
+    "buzzer": "ಅಲಾರ್ಮ್",
+    "silence": "ಅಲಾರ್ಮ್ ನಿಶ್ಶಬ್ದಗೊಳಿಸಿ",
+    "manualWarning": "ಕೈಯಾರೆ ಮೋಡ್ ಸಕ್ರಿಯವಾಗಿದೆ — ಸ್ವಯಂ ನೀರಾವರಿ ನಿಷ್ಕ್ರಿಯವಾಗಿದೆ",
+    "quickTitle": "ತ್ವರಿತ ನಿಯಂತ್ರಣೆಗಳು",
+    "lastCommand": "ಕೊನೆಯ ಆದೇಶ",
+    "sending": "ಆದೇಶ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ"
+  },
+  "alerts": {
+    "title": "ಎಚ್ಚರಿಕೆಗಳು",
+    "acknowledge": "ಅಂಗೀಕರಿಸಿ",
+    "noAlerts": "ಎಚ್ಚರಿಕೆಗಳಿಲ್ಲ",
+    "noAlertsDesc": "ನಿಮ್ಮ ಬೆಳೆಗಳು ಆರೋಗ್ಯಕರವಾಗಿವೆ",
+    "filter": {
+      "all": "ಎಲ್ಲಾ",
+      "warning": "ಎಚ್ಚರಿಕೆ",
+      "critical": "ತೀವ್ರ",
+      "unread": "ಓದದವು"
+    }
+  },
+  "history": {
+    "title": "ಸೆನ್ಸರ್ ಇತಿಹಾಸ",
+    "export": "CSV ರಫ್ತು",
+    "selectSensors": "ಗರಿಷ್ಠ 3 ಸೆನ್ಸರ್‌ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "range": {
+      "1h": "1 ಗಂಟೆ",
+      "6h": "6 ಗಂಟೆ",
+      "24h": "24 ಗಂಟೆ",
+      "7d": "7 ದಿನಗಳು"
+    }
+  },
+  "settings": {
+    "title": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "apiUrl": "API ಸರ್ವರ್ URL",
+    "apiKey": "API ಕೀ",
+    "deviceId": "ಸಾಧನ ID",
+    "testConnection": "ಸಂಪರ್ಕ ಪರೀಕ್ಷಿಸಿ",
+    "connectionOk": "ಸಂಪರ್ಕಿಸಲಾಗಿದೆ",
+    "connectionFail": "ಸರ್ವರ್‌ಗೆ ತಲುಪಲು ಸಾಧ್ಯವಿಲ್ಲ",
+    "language": "ಭಾಷೆ",
+    "save": "ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಉಳಿಸಿ",
+    "apiPlaceholder": "http://192.168.1.50:8000",
+    "show": "ತೋರಿಸಿ",
+    "hide": "ಮರೆಮಾಡಿ",
+    "saved": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಉಳಿಸಲ್ಪಟ್ಟಿವೆ",
+    "languageShort": {
+      "en": "EN",
+      "kn": "ಕ",
+      "hi": "हि",
+      "te": "తె"
+    },
+    "languageNames": {
+      "en": "EN",
+      "kn": "ಕನ್ನಡ",
+      "hi": "हिंदी",
+      "te": "తెలుగు"
+    }
+  },
+  "dashboard": {
+    "kpi": {
+      "soil": "ಮಣ್ಣಿನ ತೇವಾಂಶ",
+      "temperature": "ತಾಪಮಾನ",
+      "pump": "ಪಂಪ್ ಸ್ಥಿತಿ",
+      "activeAlerts": "ಸಕ್ರಿಯ ಎಚ್ಚರಿಕೆಗಳು"
+    },
+    "leafClassification": "ವರ್ಗೀಕರಣ",
+    "leaf": {
+      "excellent": "ಚೈತನ್ಯಭರಿತ",
+      "good": "ಸ್ಥಿರ",
+      "stressed": "ಒತ್ತಡದಲ್ಲಿದೆ"
+    },
+    "leafRgb": "RGB"
+  },
+  "common": {
+    "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+    "error": "ಏನೋ ತಪ್ಪಾಗಿದೆ",
+    "retry": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+    "lastUpdated": "ಕೊನೆಯ ನವೀಕರಣ",
+    "noData": "ಡೇಟಾ ಇಲ್ಲ",
+    "unknown": "ಅಪರಿಚಿತ",
+    "info": "ಮಾಹಿತಿ",
+    "justNow": "ಇದೀಗ",
+    "minutesAgo": "{{count}}ನಿ ಹಿಂದೆ",
+    "hoursAgo": "{{count}}ಗಂ ಹಿಂದೆ",
+    "never": "ಎಂದಿಗೂ ಇಲ್ಲ"
+  }
+}

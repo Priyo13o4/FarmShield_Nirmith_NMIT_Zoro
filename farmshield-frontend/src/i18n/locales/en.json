@@ -1,0 +1,142 @@
+{
+  "app": {
+    "setupBanner": "Configure your API connection to get started",
+    "brand": "FarmShield",
+    "primaryNav": "Primary navigation"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "history": "History",
+    "alerts": "Alerts",
+    "controls": "Controls",
+    "settings": "Settings"
+  },
+  "sensors": {
+    "soil": "Soil Moisture",
+    "ph": "pH Level",
+    "tds": "Water TDS",
+    "temp": "Temperature",
+    "humidity": "Humidity",
+    "rain": "Rain",
+    "motion": "Intrusion",
+    "npkN": "Nitrogen",
+    "npkP": "Phosphorus",
+    "npkK": "Potassium",
+    "leafColor": "Leaf Health",
+    "units": {
+      "percent": "%",
+      "ph": "pH",
+      "ppm": "ppm",
+      "celsius": "°C",
+      "rain": "mm",
+      "none": ""
+    }
+  },
+  "status": {
+    "live": "Live",
+    "polling": "Polling",
+    "offline": "Offline",
+    "connecting": "Connecting",
+    "pumpOn": "Pump On",
+    "pumpOff": "Pump Off",
+    "autoMode": "Auto Mode",
+    "manualMode": "Manual Mode",
+    "healthy": "Healthy",
+    "warning": "Warning",
+    "critical": "Critical",
+    "motion": "Motion Detected",
+    "noMotion": "Clear"
+  },
+  "controls": {
+    "pump": "Water Pump",
+    "turnOn": "Turn On",
+    "turnOff": "Turn Off",
+    "mode": "Control Mode",
+    "auto": "Automatic",
+    "manual": "Manual",
+    "buzzer": "Alarm",
+    "silence": "Silence Alarm",
+    "manualWarning": "Manual mode active — auto-irrigation is disabled",
+    "quickTitle": "Quick Controls",
+    "lastCommand": "Last command",
+    "sending": "Sending command"
+  },
+  "alerts": {
+    "title": "Alerts",
+    "acknowledge": "Acknowledge",
+    "noAlerts": "No alerts",
+    "noAlertsDesc": "Your crops are looking healthy",
+    "filter": {
+      "all": "All",
+      "warning": "Warning",
+      "critical": "Critical",
+      "unread": "Unread"
+    }
+  },
+  "history": {
+    "title": "Sensor History",
+    "export": "Export CSV",
+    "selectSensors": "Select up to 3 sensors",
+    "range": {
+      "1h": "1 Hour",
+      "6h": "6 Hours",
+      "24h": "24 Hours",
+      "7d": "7 Days"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "apiUrl": "API Server URL",
+    "apiKey": "API Key",
+    "deviceId": "Device ID",
+    "testConnection": "Test Connection",
+    "connectionOk": "Connected",
+    "connectionFail": "Cannot reach server",
+    "language": "Language",
+    "save": "Save Settings",
+    "apiPlaceholder": "http://192.168.1.50:8000",
+    "show": "Show",
+    "hide": "Hide",
+    "saved": "Settings saved",
+    "languageShort": {
+      "en": "EN",
+      "kn": "ಕ",
+      "hi": "हि",
+      "te": "తె"
+    },
+    "languageNames": {
+      "en": "EN",
+      "kn": "ಕನ್ನಡ",
+      "hi": "हिंदी",
+      "te": "తెలుగు"
+    }
+  },
+  "dashboard": {
+    "kpi": {
+      "soil": "Soil Moisture",
+      "temperature": "Temperature",
+      "pump": "Pump Status",
+      "activeAlerts": "Active Alerts"
+    },
+    "leafClassification": "Classification",
+    "leaf": {
+      "excellent": "Vibrant",
+      "good": "Stable",
+      "stressed": "Stressed"
+    },
+    "leafRgb": "RGB"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "lastUpdated": "Last updated",
+    "noData": "No data",
+    "unknown": "Unknown",
+    "info": "Info",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "never": "Never"
+  }
+}
