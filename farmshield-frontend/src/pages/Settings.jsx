@@ -1,8 +1,9 @@
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { api, configureApi, getApiConfig, getDeviceId } from '../services/api'
+import { api, configureApi, getApiConfig, getDeviceIds, setDeviceIds } from '../services/api'
+import { useFarm } from '../context/FarmContext'
 import { loadGoogleFont } from '../i18n'
 
 const LANGUAGE_OPTIONS = [
@@ -14,9 +15,12 @@ const LANGUAGE_OPTIONS = [
 
 export default function Settings() {
   const { t, i18n } = useTranslation()
+  const { activeNodeId, switchActiveNode } = useFarm()
+
   const [apiUrl, setApiUrl] = useState('')
   const [apiKey, setApiKey] = useState('')
-  const [deviceId, setDeviceId] = useState('')
+  const [deviceIds, setLocalDeviceIds] = useState([])
+  const [newDeviceId, setNewDeviceId] = useState('')
   const [language, setLanguage] = useState('en')
   const [showApiKey, setShowApiKey] = useState(false)
 
@@ -32,9 +36,34 @@ export default function Settings() {
 
     setApiUrl(config.url)
     setApiKey(config.apiKey)
-    setDeviceId(getDeviceId())
+    setLocalDeviceIds(getDeviceIds())
     setLanguage(storedLanguage)
   }, [i18n.resolvedLanguage])
+
+  function handleAddDevice() {
+    const id = newDeviceId.trim()
+    if (!id || deviceIds.includes(id)) return
+    const next = [...deviceIds, id]
+    setLocalDeviceIds(next)
+    setNewDeviceId('')
+  }
+
+  function handleRemoveDevice(id) {
+    if (deviceIds.length <= 1) return // Must keep at least 1
+    const next = deviceIds.filter((d) => d !== id)
+    setLocalDeviceIds(next)
+    // If the removed node was active, switch to first available
+    if (activeNodeId === id && next.length > 0) {
+      switchActiveNode(next[0])
+    }
+  }
+
+  function handleDeviceKeyDown(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAddDevice()
+    }
+  }
 
   async function handleTestConnection() {
     setIsTesting(true)
@@ -60,7 +89,7 @@ export default function Settings() {
 
     try {
       configureApi({ url: apiUrl, apiKey })
-      localStorage.setItem('fs_device_id', deviceId)
+      setDeviceIds(deviceIds)
       localStorage.setItem('fs_language', language)
       await i18n.changeLanguage(language)
       loadGoogleFont(language)
@@ -118,17 +147,63 @@ export default function Settings() {
           </div>
         </div>
 
+        {/* Multi-node Device IDs */}
         <div className="form-field">
-          <label className="field-label" htmlFor="device-id">
+          <span className="field-label">
             {t('settings.deviceId')}
-          </label>
-          <input
-            id="device-id"
-            className="field-input"
-            type="text"
-            value={deviceId}
-            onChange={(event) => setDeviceId(event.target.value)}
-          />
+            <span style={{ color: 'var(--color-text-tertiary)', fontWeight: 400, marginLeft: 'var(--space-2)' }}>
+              ({deviceIds.length} {deviceIds.length === 1 ? 'node' : 'nodes'})
+            </span>
+          </span>
+
+          <div className="node-list">
+            {deviceIds.map((id) => (
+              <div
+                key={id}
+                className={`node-chip ${id === activeNodeId ? 'active' : ''}`}
+                onClick={() => switchActiveNode(id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && switchActiveNode(id)}
+              >
+                <span className="node-chip-dot" />
+                <span className="node-chip-label">{id}</span>
+                {deviceIds.length > 1 && (
+                  <button
+                    type="button"
+                    className="node-chip-remove"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleRemoveDevice(id)
+                    }}
+                    aria-label={`Remove ${id}`}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="node-add-row">
+            <input
+              className="field-input"
+              type="text"
+              placeholder="esp32-node-2"
+              value={newDeviceId}
+              onChange={(e) => setNewDeviceId(e.target.value)}
+              onKeyDown={handleDeviceKeyDown}
+            />
+            <button
+              type="button"
+              className="btn btn-ghost node-add-btn"
+              onClick={handleAddDevice}
+              disabled={!newDeviceId.trim()}
+            >
+              <Plus size={16} />
+              {t('settings.addNode') || 'Add Node'}
+            </button>
+          </div>
         </div>
 
         <div className="form-field">

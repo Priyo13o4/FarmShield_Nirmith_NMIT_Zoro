@@ -8,6 +8,7 @@
     "dashboard": "Dashboard",
     "history": "History",
     "alerts": "Alerts",
+    "chat": "Assistant",
     "controls": "Controls",
     "settings": "Settings"
   },
@@ -59,7 +60,10 @@
     "manualWarning": "Manual mode active — auto-irrigation is disabled",
     "quickTitle": "Quick Controls",
     "lastCommand": "Last command",
-    "sending": "Sending command"
+    "sending": "Sending command",
+    "pumpDesc": "Controls the water pump directly",
+    "modeDesc": "Auto uses sensor thresholds. Manual lets you override.",
+    "buzzerDesc": "Silence the active intrusion alarm"
   },
   "alerts": {
     "title": "Alerts",
@@ -82,7 +86,17 @@
       "6h": "6 Hours",
       "24h": "24 Hours",
       "7d": "7 Days"
-    }
+    },
+    "noDataRange": "No data available for selected range"
+  },
+  "chat": {
+    "title": "FarmShield Assistant",
+    "subtitle": "AI-powered agricultural guidance",
+    "newChat": "New Chat",
+    "placeholder": "Ask about your farm, crops, sensors, or irrigation...",
+    "thinking": "Thinking...",
+    "error": "Failed to get response. Please try again.",
+    "threadName": "New Conversation"
   },
   "settings": {
     "title": "Settings",
@@ -98,6 +112,7 @@
     "show": "Show",
     "hide": "Hide",
     "saved": "Settings saved",
+    "addNode": "Add Node",
     "languageShort": {
       "en": "EN",
       "kn": "ಕ",

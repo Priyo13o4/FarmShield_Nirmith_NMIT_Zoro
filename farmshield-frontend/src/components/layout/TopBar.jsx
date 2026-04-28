@@ -2,12 +2,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { isDemoMode } from '../../config/runtime'
+import { getDeviceIds } from '../../services/api'
 import { useFarm } from '../../context/FarmContext'
 
 const PATH_TITLE_KEY = {
   '/': 'nav.dashboard',
   '/history': 'nav.history',
   '/alerts': 'nav.alerts',
+  '/chat': 'nav.chat',
   '/controls': 'nav.controls',
   '/settings': 'nav.settings',
 }
@@ -36,8 +39,11 @@ function getRelativeTimeLabel(lastUpdated, t) {
 export default function TopBar() {
   const { t, i18n } = useTranslation()
   const { pathname } = useLocation()
-  const { lastUpdated } = useFarm()
+  const { lastUpdated, activeNodeId, switchActiveNode } = useFarm()
   const [tick, setTick] = useState(0)
+
+  const deviceIds = getDeviceIds()
+  const showNodeSelector = deviceIds.length > 1
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,6 +70,25 @@ export default function TopBar() {
         <span className="relative-time">
           {t('common.lastUpdated')} {relativeTime}
         </span>
+
+        {isDemoMode && (
+          <span className="demo-badge">DEMO</span>
+        )}
+
+        {showNodeSelector && (
+          <div className="node-selector" role="group" aria-label="Select node">
+            {deviceIds.map((id) => (
+              <button
+                key={id}
+                type="button"
+                className={`node-selector-btn ${id === activeNodeId ? 'active' : ''}`}
+                onClick={() => switchActiveNode(id)}
+              >
+                {id}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="lang-switch" role="group" aria-label={t('settings.language')}>
           {LANGUAGE_OPTIONS.map((languageCode) => (

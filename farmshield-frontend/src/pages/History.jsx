@@ -108,7 +108,7 @@ export default function History() {
           <EmptyState
             icon={BarChart2}
             title={t('common.noData')}
-            description="Select up to 3 sensors to view chart"
+            description={t('history.selectSensors')}
           />
         )
       }
@@ -116,7 +116,7 @@ export default function History() {
         <EmptyState
           icon={BarChart2}
           title={t('common.noData')}
-          description="No data available for selected range"
+          description={t('history.noDataRange') || 'No data available for selected range'}
         />
       )
     },
@@ -163,16 +163,22 @@ export default function History() {
         ))}
       </div>
 
-      {hasFetched && errorMessage ? <div className="inline-message error">{errorMessage}</div> : null}
-
-      <section className="chart-card">
-        <SensorChart
-          data={historyRows}
-          selectedSensors={selectedSensors}
-          isLoading={isLoading}
-          emptyState={emptyState}
+      {hasFetched && errorMessage ? (
+        <EmptyState
+          icon={BarChart2}
+          title={errorMessage}
+          description={t('common.retry')}
         />
-      </section>
+      ) : (
+        <section className="chart-card">
+          <SensorChart
+            data={historyRows}
+            selectedSensors={selectedSensors}
+            isLoading={isLoading}
+            emptyState={emptyState}
+          />
+        </section>
+      )}
     </section>
   )
 }

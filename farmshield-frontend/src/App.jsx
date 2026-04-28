@@ -10,6 +10,7 @@ import Controls from './pages/Controls'
 import Dashboard from './pages/Dashboard'
 import History from './pages/History'
 import Settings from './pages/Settings'
+import Chat from './pages/Chat'
 
 function AppRoutes() {
   const { t } = useTranslation()
@@ -36,6 +37,7 @@ function AppRoutes() {
         <Route index element={<Dashboard />} />
         <Route path="history" element={<History />} />
         <Route path="alerts" element={<Alerts />} />
+        <Route path="chat" element={<Chat />} />
         <Route path="controls" element={<Controls />} />
         <Route path="settings" element={<Settings />} />
       </Route>

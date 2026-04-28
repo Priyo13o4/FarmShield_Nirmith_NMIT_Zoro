@@ -315,3 +315,40 @@ export function historyToCsv(readings) {
 
   return [headers.join(','), ...rows].join('\n')
 }
+
+export const demoChatResponses = [
+  {
+    triggers: ['soil', 'moisture'],
+    reply: "Current soil moisture is 47.3%. This is within the healthy range of 40–60% for most crops. The last irrigation cycle ran 3 hours ago.",
+    sources: ['sensor_data']
+  },
+  {
+    triggers: ['npk', 'nitrogen', 'nutrient'],
+    reply: "Nitrogen: 45 mg/kg\nPhosphorus: 28 mg/kg\nPotassium: 30 mg/kg\nYour NPK levels are balanced. No immediate fertilization is required.",
+    sources: ['sensor_data', 'farming_knowledge']
+  },
+  {
+    triggers: ['irrigate', 'water', 'pump'],
+    reply: "Based on current soil moisture (47.3%) and temperature (28°C), I recommend irrigating for 15 minutes this evening to maintain optimal hydration without waterlogging.",
+    sources: ['farming_knowledge']
+  },
+  {
+    triggers: ['temperature', 'hot', 'heat'],
+    reply: "The current temperature is 31.2°C, which is slightly elevated. You may want to ensure adequate soil moisture to prevent heat stress.",
+    sources: ['sensor_data', 'farming_knowledge']
+  }
+]
+
+export function generateDemoChatResponse(message) {
+  const lowerMsg = (message || '').toLowerCase()
+  for (const resp of demoChatResponses) {
+    if (resp.triggers.some(t => lowerMsg.includes(t))) {
+      return { reply: resp.reply, sources: resp.sources }
+    }
+  }
+  return { 
+    reply: "I'm your FarmShield assistant! I can help you analyze your sensor data, provide farming best practices, or give irrigation recommendations.", 
+    sources: [] 
+  }
+}
+

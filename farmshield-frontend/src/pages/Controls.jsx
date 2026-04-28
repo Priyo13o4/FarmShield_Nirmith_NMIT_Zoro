@@ -83,7 +83,7 @@ export default function Controls() {
           </span>
         }
       >
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted, var(--color-text-secondary))', marginTop: '-0.5rem', marginBottom: '1rem' }}>Controls the water pump directly</p>
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted, var(--color-text-secondary))', marginTop: '-0.5rem', marginBottom: '1rem' }}>{t('controls.pumpDesc')}</p>
         <button
           type="button"
           className={`btn ${pumpState === 'ON' ? 'btn-ghost' : 'btn-success'}`}
@@ -104,7 +104,7 @@ export default function Controls() {
       </ControlCard>
 
       <ControlCard title={t('controls.mode')}>
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted, var(--color-text-secondary))', marginTop: '-0.5rem', marginBottom: '1rem' }}>Auto uses sensor thresholds. Manual lets you override.</p>
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted, var(--color-text-secondary))', marginTop: '-0.5rem', marginBottom: '1rem' }}>{t('controls.modeDesc')}</p>
         <div className="segmented" role="group" aria-label={t('controls.mode')}>
           <button
             type="button"
@@ -138,7 +138,7 @@ export default function Controls() {
       </ControlCard>
 
       <ControlCard title={t('controls.buzzer')}>
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted, var(--color-text-secondary))', marginTop: '-0.5rem', marginBottom: '1rem' }}>Silence the active intrusion alarm</p>
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted, var(--color-text-secondary))', marginTop: '-0.5rem', marginBottom: '1rem' }}>{t('controls.buzzerDesc')}</p>
         <button
           type="button"
           className="btn btn-danger"

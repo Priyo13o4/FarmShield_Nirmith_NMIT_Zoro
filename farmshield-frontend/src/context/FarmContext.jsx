@@ -6,10 +6,11 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from 'react'
 
 import { isDemoMode } from '../config/runtime'
-import { api, getApiConfig, getDeviceId } from '../services/api'
+import { api, getApiConfig, getDeviceId, getDeviceIds } from '../services/api'
 import { wsManager } from '../services/websocket'
 
 const POLLING_INTERVAL = 6000
@@ -18,6 +19,7 @@ const FarmContext = createContext(null)
 
 const ACTIONS = {
   SET_LATEST: 'SET_LATEST',
+  SET_NODE_DATA: 'SET_NODE_DATA',
   SET_CONNECTION_STATUS: 'SET_CONNECTION_STATUS',
   PREPEND_ALERT: 'PREPEND_ALERT',
   ACKNOWLEDGE_ALERT: 'ACKNOWLEDGE_ALERT',
@@ -29,8 +31,11 @@ const ACTIONS = {
 }
 
 const initialState = {
+  /** Active node's sensor data (for backward compat) */
   sensorData: null,
   mlOutput: null,
+  /** Per-node sensor data map: { [deviceId]: { data, mlOutput, lastUpdated } } */
+  nodesData: {},
   alerts: [],
   unreadAlertCount: 0,
   connectionStatus: 'connecting',
@@ -103,6 +108,18 @@ function farmReducer(state, action) {
       }
     }
 
+    case ACTIONS.SET_NODE_DATA: {
+      const { deviceId, data, mlOutput, lastUpdated } = action.payload
+      return {
+        ...state,
+        nodesData: {
+          ...state.nodesData,
+          [deviceId]: { data, mlOutput, lastUpdated },
+        },
+        isLoading: false,
+      }
+    }
+
     case ACTIONS.SET_CONNECTION_STATUS:
       return {
         ...state,
@@ -170,6 +187,7 @@ function farmReducer(state, action) {
 
 export function FarmProvider({ children }) {
   const [state, dispatch] = useReducer(farmReducer, initialState)
+  const [activeNodeId, setActiveNodeId] = useState(() => getDeviceId())
   const pollingRef = useRef(null)
 
   const stopPolling = useCallback(() => {
@@ -179,22 +197,63 @@ export function FarmProvider({ children }) {
     }
   }, [])
 
-  const refreshLatest = useCallback(async () => {
+  /** Refresh data for ALL registered nodes */
+  const refreshAllNodes = useCallback(async () => {
     try {
-      const latest = await api.sensors.latest(getDeviceId())
-      const normalized = normalizeLatestPayload(latest)
-      dispatch({
-        type: ACTIONS.SET_LATEST,
-        payload: {
-          ...normalized,
-          lastUpdated: new Date().toISOString(),
-        },
+      const nodesMap = await api.sensors.latestAll()
+      const now = new Date().toISOString()
+
+      Object.entries(nodesMap).forEach(([deviceId, rawData]) => {
+        if (rawData) {
+          const normalized = normalizeLatestPayload(rawData)
+          dispatch({
+            type: ACTIONS.SET_NODE_DATA,
+            payload: {
+              deviceId,
+              data: normalized.data,
+              mlOutput: normalized.mlOutput,
+              lastUpdated: now,
+            },
+          })
+        }
       })
+
+      // Also set the active node as the primary sensorData for backward compat
+      const activeData = nodesMap[activeNodeId]
+      if (activeData) {
+        const normalized = normalizeLatestPayload(activeData)
+        dispatch({
+          type: ACTIONS.SET_LATEST,
+          payload: {
+            ...normalized,
+            lastUpdated: now,
+          },
+        })
+      } else {
+        dispatch({ type: ACTIONS.SET_LOADING, payload: false })
+      }
     } catch (_error) {
       dispatch({ type: ACTIONS.SET_CONNECTION_STATUS, payload: 'offline' })
       dispatch({ type: ACTIONS.SET_LOADING, payload: false })
     }
-  }, [])
+  }, [activeNodeId])
+
+  /** Switch the active node — update primary sensorData from cached nodesData */
+  const switchActiveNode = useCallback((nodeId) => {
+    setActiveNodeId(nodeId)
+    // Immediately update primary sensorData from cache
+    const cached = state.nodesData[nodeId]
+    if (cached) {
+      dispatch({
+        type: ACTIONS.SET_LATEST,
+        payload: {
+          data: cached.data,
+          mlOutput: cached.mlOutput,
+          lastUpdated: cached.lastUpdated,
+        },
+      })
+    }
+  }, [state.nodesData])
 
   const startPolling = useCallback(() => {
     if (isDemoMode) {
@@ -206,13 +265,14 @@ export function FarmProvider({ children }) {
     }
 
     pollingRef.current = setInterval(() => {
-      refreshLatest()
+      refreshAllNodes()
     }, POLLING_INTERVAL)
-  }, [refreshLatest])
+  }, [refreshAllNodes])
 
+  // Initial fetch
   useEffect(() => {
-    refreshLatest()
-  }, [refreshLatest])
+    refreshAllNodes()
+  }, [refreshAllNodes])
 
   useEffect(() => {
     const { url, apiKey } = getApiConfig()
@@ -224,14 +284,31 @@ export function FarmProvider({ children }) {
     })
 
     const unsubscribeSensorData = wsManager.on('sensorData', (payload) => {
+      const deviceId = payload.data?.deviceid || payload.data?.deviceId || activeNodeId
+
+      // Store in nodesData map
       dispatch({
-        type: ACTIONS.SET_LATEST,
+        type: ACTIONS.SET_NODE_DATA,
         payload: {
+          deviceId,
           data: payload.data,
           mlOutput: payload.mlOutput,
           lastUpdated: new Date().toISOString(),
         },
       })
+
+      // If this data is for the active node, also update primary sensorData
+      if (deviceId === activeNodeId) {
+        dispatch({
+          type: ACTIONS.SET_LATEST,
+          payload: {
+            data: payload.data,
+            mlOutput: payload.mlOutput,
+            lastUpdated: new Date().toISOString(),
+          },
+        })
+      }
+
       dispatch({ type: ACTIONS.SET_CONNECTION_STATUS, payload: 'live' })
     })
 
@@ -264,7 +341,7 @@ export function FarmProvider({ children }) {
       stopPolling()
       wsManager.disconnect()
     }
-  }, [startPolling, stopPolling])
+  }, [startPolling, stopPolling, activeNodeId])
 
   const commandPump = useCallback(async (nextState) => {
     await api.control.pump(nextState)
@@ -312,6 +389,8 @@ export function FarmProvider({ children }) {
   const value = useMemo(
     () => ({
       ...state,
+      activeNodeId,
+      switchActiveNode,
       commandPump,
       commandMode,
       silenceBuzzer,
@@ -322,6 +401,8 @@ export function FarmProvider({ children }) {
     }),
     [
       state,
+      activeNodeId,
+      switchActiveNode,
       commandPump,
       commandMode,
       silenceBuzzer,

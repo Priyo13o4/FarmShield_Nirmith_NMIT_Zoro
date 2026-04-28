@@ -2,6 +2,7 @@ import {
   Bell,
   Gauge,
   History,
+  MessageSquare,
   Settings,
   SlidersHorizontal,
 } from 'lucide-react'
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
   { path: '/', labelKey: 'nav.dashboard', icon: Gauge },
   { path: '/history', labelKey: 'nav.history', icon: History },
   { path: '/alerts', labelKey: 'nav.alerts', icon: Bell },
+  { path: '/chat', labelKey: 'nav.chat', icon: MessageSquare },
   { path: '/controls', labelKey: 'nav.controls', icon: SlidersHorizontal },
   { path: '/settings', labelKey: 'nav.settings', icon: Settings },
 ]

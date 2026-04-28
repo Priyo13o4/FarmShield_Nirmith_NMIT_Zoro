@@ -7,6 +7,14 @@ import SensorGrid from '../components/sensors/SensorGrid'
 import { useFarm } from '../context/FarmContext'
 import { getSensorStatus } from '../utils/sensorStatus'
 
+const TONE_COLORS = {
+  healthy: 'var(--color-healthy)',
+  warning: 'var(--color-warning)',
+  critical: 'var(--color-critical)',
+  muted: 'var(--color-text-tertiary)',
+  unknown: 'var(--color-text-tertiary)',
+}
+
 function formatNumber(value) {
   if (value === null || value === undefined || Number.isNaN(value)) {
     return null
@@ -39,7 +47,7 @@ export default function Dashboard() {
     () => [
       {
         key: 'soil',
-        icon: <Droplets size={16} style={{ color: 'var(--color-text-secondary)' }} aria-hidden="true" />,
+        icon: Droplets,
         label: t('dashboard.kpi.soil'),
         value:
           formatNumber(soilValue) !== null
@@ -49,7 +57,7 @@ export default function Dashboard() {
       },
       {
         key: 'temperature',
-        icon: <Thermometer size={16} style={{ color: 'var(--color-text-secondary)' }} aria-hidden="true" />,
+        icon: Thermometer,
         label: t('dashboard.kpi.temperature'),
         value:
           formatNumber(tempValue) !== null
@@ -59,14 +67,14 @@ export default function Dashboard() {
       },
       {
         key: 'pump',
-        icon: <Zap size={16} style={{ color: 'var(--color-text-secondary)' }} aria-hidden="true" />,
+        icon: Zap,
         label: t('dashboard.kpi.pump'),
         value: pumpOn ? t('status.pumpOn') : t('status.pumpOff'),
         tone: pumpOn ? 'healthy' : 'muted',
       },
       {
         key: 'alerts',
-        icon: <Bell size={16} style={{ color: 'var(--color-text-secondary)' }} aria-hidden="true" />,
+        icon: Bell,
         label: t('dashboard.kpi.activeAlerts'),
         value: String(activeAlertCount),
         tone: activeAlertCount > 0 ? 'warning' : 'healthy',
@@ -104,15 +112,19 @@ export default function Dashboard() {
   return (
     <section className="page-stack" aria-label={t('nav.dashboard')}>
       <section className="kpi-grid" aria-label={t('nav.dashboard')}>
-        {kpiItems.map((kpi) => (
-          <article key={kpi.key} className="kpi-card">
-            <div className="kpi-label" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-              {kpi.icon}
-              <span>{kpi.label}</span>
-            </div>
-            <div className={`kpi-value ${kpi.tone}`}>{kpi.value}</div>
-          </article>
-        ))}
+        {kpiItems.map((kpi) => {
+          const Icon = kpi.icon
+          const iconColor = TONE_COLORS[kpi.tone] || TONE_COLORS.unknown
+          return (
+            <article key={kpi.key} className="kpi-card">
+              <div className="kpi-label" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                <Icon size={16} style={{ color: iconColor }} aria-hidden="true" />
+                <span>{kpi.label}</span>
+              </div>
+              <div className={`kpi-value ${kpi.tone}`}>{kpi.value}</div>
+            </article>
+          )
+        })}
       </section>
 
       <section className="dashboard-layout">
