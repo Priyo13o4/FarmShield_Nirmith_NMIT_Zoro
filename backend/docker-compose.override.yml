@@ -1,0 +1,13 @@
+# docker-compose.override.yml — DEV ONLY
+# Automatically merged by Docker Compose on `docker compose up`.
+# Adds bind mounts for live reload and ML model hot-drop.
+# Do NOT deploy this file to Pi — only docker-compose.yml is used there.
+
+services:
+  fastapi:
+    volumes:
+      - ./server:/app               # Live reload in dev (FASTAPI_RELOAD=true)
+      - ./server/app/services/ml/models:/app/app/services/ml/models  # ML model hot-drop
+      - ./server/app/services/chat/faiss_index:/app/app/services/chat/faiss_index  # FAISS index persistence
+    environment:
+      FASTAPI_RELOAD: "true"

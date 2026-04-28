@@ -1,0 +1,78 @@
+# docker-compose.yml — BASE FILE
+# All tuneable values are injected from .env
+# Run: docker compose up --build
+# Pi deployment: update .env and run the same command
+#
+# Dev overrides (bind mounts, reload) live in docker-compose.override.yml
+# which Docker Compose merges automatically.
+
+services:
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: farmshield-mosquitto
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/config/passwd:/mosquitto/config/passwd:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "healthcheck", "-m", "ping", "-u", "${MQTT_USERNAME}", "-P", "${MQTT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  timescaledb:
+    image: timescale/timescaledb:2.26.3-pg16
+    container_name: farmshield-timescaledb
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    command: >
+      postgres
+        -c shared_buffers=256MB
+        -c work_mem=4MB
+        -c maintenance_work_mem=64MB
+        -c effective_cache_size=512MB
+        -c max_connections=50
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  fastapi:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: farmshield-fastapi
+    ports:
+      - "${FASTAPI_PORT}:8000"
+    env_file:
+      - .env
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  timescaledb_data:
+  mosquitto_data:
+  mosquitto_log:

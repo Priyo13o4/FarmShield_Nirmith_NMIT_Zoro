@@ -1,0 +1,35 @@
+[project]
+name = "farmshield-backend"
+version = "1.0.0"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.11.0",
+    "pydantic-settings>=2.7.0",
+    "sqlalchemy[asyncio]>=2.0.40",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "fastapi-mqtt>=2.2.0",
+    "structlog>=25.0.0",
+]
+
+[project.optional-dependencies]
+ml-sklearn = ["scikit-learn>=1.6.0", "joblib>=1.4.0"]
+ml-tflite  = ["tflite-runtime>=2.14.0"]
+chat = [
+    "langchain>=0.3.0",
+    "langchain-google-genai>=2.0.0",
+    "langchain-community>=0.3.0",
+    "faiss-cpu>=1.9.0",
+    "psycopg2-binary>=2.9.0",   # sync driver required by LangChain SQLDatabase
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.25.0",
+    "httpx>=0.28.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["../tests"]

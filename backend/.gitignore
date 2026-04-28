@@ -1,0 +1,48 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker volumes (local)
+timescaledb_data/
+mosquitto_data/
+mosquitto_log/
+
+# ML models (user-supplied at runtime)
+server/app/services/ml/models/*.pkl
+server/app/services/ml/models/*.tflite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Mosquitto password file (generated, contains hashes)
+mosquitto/config/passwd
+
+# pytest
+.pytest_cache/
+htmlcov/
+.coverage
+
+# FAISS vector index — built at runtime from Gemini Embeddings API, not committed
+# Persisted via docker-compose.override.yml bind mount for dev restarts
+server/app/services/chat/faiss_index/
+Hardware/
