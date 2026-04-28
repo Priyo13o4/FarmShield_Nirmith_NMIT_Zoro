@@ -19,6 +19,7 @@ class ChatResponse(BaseModel):
     session_id: str
     sources: list[str]
     ts: int
+    reasoning: str | None = None
 
 
 class SessionClearResponse(BaseModel):

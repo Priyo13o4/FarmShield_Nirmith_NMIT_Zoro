@@ -19,6 +19,7 @@ Corrections from PRD verification applied here:
 """
 
 import time
+import json
 from collections.abc import AsyncIterator
 from typing import Any
 
@@ -41,15 +42,18 @@ You have access to three tools:
 NPK nutrients, pH ranges, and pest management.
 
 Rules:
-1. Always use the SQL query tool before making any claim about current or historical sensor values.
-2. Never invent or guess sensor readings. If a query returns no rows, say so clearly.
-3. Use sql_database_schema first if you are unsure of column names or data types.
-4. Keep answers concise and actionable. Farmers want facts and clear next steps, not essays.
-5. If a question is completely unrelated to agriculture or this farm, politely decline.
-6. Default device_id for all queries: {device_id}
-7. The sensor_readings table contains: time, device_id, soil_pct, temperature_c, humidity_pct, \
+1. ALWAYS start your response with your internal thought process wrapped in `<thought>` tags.
+   Example: `<thought>The user is asking for moisture data. I need to query the database.</thought>`
+2. Always think step by step before using any tool. Explain your plan clearly in the thought block.
+2. Always use the SQL query tool before making any claim about current or historical sensor values.
+3. Never invent or guess sensor readings. If a query returns no rows, say so clearly.
+4. Use sql_database_schema first if you are unsure of column names or data types.
+5. Keep answers concise and actionable. Farmers want facts and clear next steps, not essays.
+6. If a question is completely unrelated to agriculture or this farm, politely decline.
+7. Default device_id for all queries: {device_id}
+8. The sensor_readings table contains: time, device_id, soil_pct, temperature_c, humidity_pct, \
 ph, tds_ppm, rain_raw, nitrogen_mgkg, phosphorus_mgkg, potassium_mgkg, leaf_color, pump_state.
-8. The alerts table contains: id, time, device_id, alert_type, severity, value, threshold, message.
+9. The alerts table contains: id, time, device_id, alert_type, severity, value, threshold, message.
 """
 
 
@@ -116,25 +120,49 @@ class FarmShieldAgent:
 
             # Result is AgentState — final answer is the last AIMessage
             reply = ""
+            reasoning_parts = []
             sources: list[str] = []
-            for msg in reversed(result.get("messages", [])):
+            
+            messages = result.get("messages", [])
+            for msg in reversed(messages):
                 if isinstance(msg, AIMessage) and msg.content:
+                    raw_content = ""
                     if isinstance(msg.content, str):
-                        reply = msg.content
+                        raw_content = msg.content
                     elif isinstance(msg.content, list):
-                        # Extract text blocks (e.g. ignoring 'thinking' blocks)
-                        texts = [b.get("text", "") for b in msg.content if isinstance(b, dict) and b.get("type") == "text"]
-                        reply = "\n".join(texts) if texts else str(msg.content)
+                        texts = []
+                        for b in msg.content:
+                            if isinstance(b, dict):
+                                if b.get("type") == "text":
+                                    texts.append(b.get("text", ""))
+                                elif b.get("type") in ["thought", "thinking"]:
+                                    reasoning_parts.append(b.get("text", ""))
+                        raw_content = "\n".join(texts)
+
+                    # Extract <thought> tags from raw content
+                    import re
+                    thought_match = re.search(r"<thought>(.*?)</thought>", raw_content, re.DOTALL)
+                    if thought_match:
+                        reasoning_parts.append(thought_match.group(1).strip())
+                        reply = raw_content.replace(thought_match.group(0), "").strip()
                     else:
-                        reply = str(msg.content)
+                        reply = raw_content
                     break
 
-            # Extract tool names used from intermediate ToolMessages
-            sources = self._extract_sources(result.get("messages", []))
+            # Extract tool names used and add to reasoning if no explicit thought blocks found
+            sources = self._extract_sources(messages)
+            if not reasoning_parts:
+                for msg in messages:
+                    if msg.__class__.__name__ == "ToolMessage":
+                        name = getattr(msg, "name", "unknown")
+                        reasoning_parts.append(f"Used tool: **{name}**")
+
+            reasoning = "\n\n".join(reasoning_parts) if reasoning_parts else None
 
             await session_store.append(session_id, message, reply)
             return {
                 "reply": reply,
+                "reasoning": reasoning,
                 "sources": sources,
                 "session_id": session_id,
                 "ts": int(time.time()),
@@ -151,45 +179,113 @@ class FarmShieldAgent:
 
     async def stream(self, message: str, session_id: str) -> AsyncIterator[dict]:
         """
-        Stream agent response token by token.
-
-        Error 4 fix: yields dicts instead of raw strings.
-          - Regular tokens: {"token": "..."}
-          - Final item:     {"done": True, "sources": [...], "session_id": "...", "ts": int}
-
-        The SSE generator in chat.py checks for "done" key to route correctly.
-
-        Note: LangGraph astream with stream_mode="messages" yields (message_chunk, metadata)
-        tuples. We filter for AIMessage chunks from the model node.
+        Stream agent response token by token with <thought> tag extraction.
         """
         try:
             history = await session_store.get_history(session_id)
             messages = self._build_messages(history, message)
             full_reply: list[str] = []
             all_messages: list = []
+            
+            in_thought_block = False
+            buffer = ""
 
             async for chunk, metadata in self._graph.astream(
                 {"messages": messages},
                 stream_mode="messages",
             ):
                 all_messages.append(chunk)
-                # Only yield AIMessage content tokens (not tool results)
+
+                # 1. Capture tool calls as reasoning
+                if hasattr(chunk, "tool_calls") and chunk.tool_calls:
+                    for tc in chunk.tool_calls:
+                        args = json.dumps(tc.get("args", {}))
+                        yield {"reasoning": f"Calling tool: **{tc['name']}** with arguments: `{args}`\n"}
+
+                # 2. Capture AIMessage content tokens
                 if isinstance(chunk, AIMessage) and chunk.content:
+                    token = ""
                     if isinstance(chunk.content, str):
                         token = chunk.content
                     elif isinstance(chunk.content, list):
-                        texts = [b.get("text", "") for b in chunk.content if isinstance(b, dict) and b.get("type") == "text"]
+                        texts = []
+                        for b in chunk.content:
+                            if isinstance(b, dict):
+                                if b.get("type") == "text":
+                                    texts.append(b.get("text", ""))
+                                elif b.get("type") in ["thought", "thinking"]:
+                                    thought = b.get("text", "")
+                                    if thought:
+                                        yield {"reasoning": thought}
                         token = "".join(texts)
-                    else:
-                        token = str(chunk.content)
-
+                    
                     if token:
+                        buffer += token
                         full_reply.append(token)
-                        yield {"token": token}
+                        
+                        # Process buffer for <thought> tags
+                        while True:
+                            if not in_thought_block:
+                                if "<thought>" in buffer:
+                                    start_idx = buffer.find("<thought>")
+                                    if start_idx > 0:
+                                        yield {"token": buffer[:start_idx]}
+                                    in_thought_block = True
+                                    buffer = buffer[start_idx + 9:] # len("<thought>")
+                                elif "<" in buffer:
+                                    # Might be start of <thought>, wait for more tokens
+                                    # But only if it's at the end
+                                    tag_start = buffer.rfind("<")
+                                    if tag_start >= 0 and "<thought>".startswith(buffer[tag_start:]):
+                                        if tag_start > 0:
+                                            yield {"token": buffer[:tag_start]}
+                                            buffer = buffer[tag_start:]
+                                        break
+                                    else:
+                                        yield {"token": buffer}
+                                        buffer = ""
+                                        break
+                                else:
+                                    yield {"token": buffer}
+                                    buffer = ""
+                                    break
+                            else:
+                                if "</thought>" in buffer:
+                                    end_idx = buffer.find("</thought>")
+                                    if end_idx > 0:
+                                        yield {"reasoning": buffer[:end_idx]}
+                                    in_thought_block = False
+                                    buffer = buffer[end_idx + 10:] # len("</thought>")
+                                elif "<" in buffer:
+                                    tag_start = buffer.rfind("<")
+                                    if tag_start >= 0 and "</thought>".startswith(buffer[tag_start:]):
+                                        if tag_start > 0:
+                                            yield {"reasoning": buffer[:tag_start]}
+                                            buffer = buffer[tag_start:]
+                                        break
+                                    else:
+                                        yield {"reasoning": buffer}
+                                        buffer = ""
+                                        break
+                                else:
+                                    yield {"reasoning": buffer}
+                                    buffer = ""
+                                    break
+
+            # Yield remaining buffer
+            if buffer:
+                if in_thought_block:
+                    yield {"reasoning": buffer}
+                else:
+                    yield {"token": buffer}
 
             full_text = "".join(full_reply)
             sources = self._extract_sources(all_messages)
-            await session_store.append(session_id, message, full_text)
+            
+            # Clean up the final text stored in history (remove thoughts)
+            import re
+            cleaned_text = re.sub(r"<thought>.*?</thought>", "", full_text, flags=re.DOTALL).strip()
+            await session_store.append(session_id, message, cleaned_text)
 
             # Error 4 fix: terminal dict with done=True
             yield {

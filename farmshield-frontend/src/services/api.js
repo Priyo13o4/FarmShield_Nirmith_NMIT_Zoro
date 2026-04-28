@@ -390,7 +390,7 @@ export const api = {
       }
       return request('POST', '/chat/message', { message, session_id: sessionId })
     },
-    streamMessage({ message, sessionId, onToken, onDone, onError }) {
+    streamMessage({ message, sessionId, onToken, onReasoning, onDone, onError }) {
       if (isDemoMode) {
         let isCancelled = false
         const result = generateDemoChatResponse(message)
@@ -398,6 +398,13 @@ export const api = {
         
         setTimeout(() => {
           if (isCancelled) return
+          
+          // Simulate some reasoning first
+          if (onReasoning) {
+            onReasoning("I am checking the current sensor readings in the database...\n")
+            onReasoning("Analyzing soil moisture levels across all nodes...\n")
+          }
+
           let index = 0
           const timer = setInterval(() => {
             if (isCancelled) {
@@ -430,6 +437,8 @@ export const api = {
             eventSource.close()
           } else if (parsed.token) {
             onToken(parsed.token)
+          } else if (parsed.reasoning) {
+            if (onReasoning) onReasoning(parsed.reasoning)
           }
         } catch (err) {
           console.error('SSE parse error:', err)

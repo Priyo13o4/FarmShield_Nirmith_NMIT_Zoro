@@ -1161,6 +1161,57 @@ button {
   50% { opacity: 0; }
 }
 
+/* ─── Chat Reasoning (Thinking Process) ─── */
+
+.chat-reasoning-section {
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-2);
+}
+
+.chat-thinking-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-2);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  transition: all var(--duration-fast) var(--ease-standard);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  margin-bottom: var(--space-1);
+}
+
+.chat-thinking-toggle:hover {
+  background: var(--color-surface-3);
+  color: var(--color-text-secondary);
+  border-color: var(--color-text-tertiary);
+}
+
+.chat-reasoning-content {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  background: var(--color-surface-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-3);
+  margin-top: var(--space-2);
+  border-left: 2px solid var(--color-primary);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.chat-reasoning-content p {
+  margin-bottom: var(--space-2);
+}
+
+.chat-reasoning-content p:last-child {
+  margin-bottom: 0;
+}
+
 .chat-sources {
   display: flex;
   flex-wrap: wrap;

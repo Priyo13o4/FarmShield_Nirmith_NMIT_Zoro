@@ -71,16 +71,22 @@ export default function Chat() {
     const streamingId = 'streaming'
     
     // Setup initial streaming state
-    setMessages(prev => [...prev, userMessage, { id: streamingId, role: 'assistant', content: '', sources: null }])
+    setMessages(prev => [...prev, userMessage, { id: streamingId, role: 'assistant', content: '', reasoning: '', sources: null }])
     setIsTyping(true)
 
     try {
       abortControllerRef.current = api.chat.streamMessage({
         message: text,
         sessionId,
+        onReasoning: (reasoning) => {
+          setMessages(prev => prev.map(m => 
+            m.id === streamingId ? { ...m, reasoning: (m.reasoning || '') + reasoning } : m
+          ))
+          scrollToBottom()
+        },
         onToken: (token) => {
           setMessages(prev => prev.map(m => 
-            m.id === streamingId ? { ...m, content: m.content + token } : m
+            m.id === streamingId ? { ...m, content: (m.content || '') + token } : m
           ))
           scrollToBottom()
         },
@@ -170,6 +176,7 @@ export default function Chat() {
                 key={msg.id} 
                 role={msg.role} 
                 content={msg.content} 
+                reasoning={msg.reasoning}
                 sources={msg.sources}
                 isStreaming={msg.id === 'streaming'}
               />

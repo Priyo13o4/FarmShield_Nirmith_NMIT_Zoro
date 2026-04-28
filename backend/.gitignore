@@ -45,4 +45,3 @@ htmlcov/
 # FAISS vector index — built at runtime from Gemini Embeddings API, not committed
 # Persisted via docker-compose.override.yml bind mount for dev restarts
 server/app/services/chat/faiss_index/
-Hardware/
