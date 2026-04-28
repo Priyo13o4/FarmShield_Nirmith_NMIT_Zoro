@@ -1,11 +1,10 @@
-import { Droplets, Thermometer, Zap, Bell } from 'lucide-react'
+import { Zap, Bell } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import ControlCard from '../components/controls/ControlCard'
 import SensorGrid from '../components/sensors/SensorGrid'
 import { useFarm } from '../context/FarmContext'
-import { getSensorStatus } from '../utils/sensorStatus'
 
 const TONE_COLORS = {
   healthy: 'var(--color-healthy)',
@@ -37,34 +36,10 @@ export default function Dashboard() {
   const [pendingAction, setPendingAction] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
-  const rawSoil = sensorData?.soilPct ?? sensorData?.soilMoisturePct
-  const soilValue = rawSoil != null ? Number(rawSoil) : null
-  const rawTemp = sensorData?.tempC ?? sensorData?.temperatureC
-  const tempValue = rawTemp != null ? Number(rawTemp) : null
   const activeAlertCount = alerts.filter((alert) => !alert.acknowledged).length
 
   const kpiItems = useMemo(
     () => [
-      {
-        key: 'soil',
-        icon: Droplets,
-        label: t('dashboard.kpi.soil'),
-        value:
-          formatNumber(soilValue) !== null
-            ? `${formatNumber(soilValue)}${t('sensors.units.percent')}`
-            : '—',
-        tone: soilValue !== null ? getSensorStatus('soilPct', soilValue) : 'unknown',
-      },
-      {
-        key: 'temperature',
-        icon: Thermometer,
-        label: t('dashboard.kpi.temperature'),
-        value:
-          formatNumber(tempValue) !== null
-            ? `${formatNumber(tempValue)}${t('sensors.units.celsius')}`
-            : '—',
-        tone: tempValue !== null ? getSensorStatus('tempC', tempValue) : 'unknown',
-      },
       {
         key: 'pump',
         icon: Zap,
@@ -80,7 +55,7 @@ export default function Dashboard() {
         tone: activeAlertCount > 0 ? 'warning' : 'healthy',
       },
     ],
-    [t, soilValue, tempValue, pumpOn, activeAlertCount]
+    [t, pumpOn, activeAlertCount]
   )
 
   async function handlePumpCommand(nextState) {
