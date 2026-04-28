@@ -8,19 +8,7 @@ set -e
 # Ensure app module is importable by Alembic
 export PYTHONPATH=/app
 
-# Install chat dependencies if feature is enabled
-# This keeps the base image lean — LangChain/FAISS only pulled when needed
-# Note: pip install -e ".[chat]" fails when setuptools sees both app/ and alembic/
-# as top-level packages (flat-layout discovery error). Install packages directly instead.
-if [ "$CHAT_ENABLED" = "true" ]; then
-    echo "CHAT_ENABLED=true: installing chat dependencies..."
-    pip install --no-cache-dir \
-        "langchain>=0.3.0" \
-        "langchain-google-genai>=2.0.0" \
-        "langchain-community>=0.3.0" \
-        "faiss-cpu>=1.9.0" \
-        "psycopg2-binary>=2.9.0"
-fi
+# Chat dependencies are now baked into the Docker image via Dockerfile
 
 # Always run migrations first
 echo "Running Alembic migrations..."

@@ -19,13 +19,20 @@ router = APIRouter(prefix="/sensors", tags=["sensors"], dependencies=[Depends(re
 
 @router.get("/latest", response_model=SensorReadingOut)
 async def get_latest_reading(
-    device_id: str = Query(default="farmshield_node1", description="Target device"),
+    device_id: str | None = Query(default=None, description="Target device (snake_case)"),
+    deviceid: str | None = Query(default=None, description="Target device (camelCase/aliased)"),
     db: AsyncSession = Depends(get_db),
 ):
     """Return the most recent sensor reading for a device."""
-    reading = await sensor_service.get_latest(db, device_id)
+    # Fallback logic to support frontend 'deviceid' param
+    final_device_id = device_id or deviceid or "farmshield_node1"
+    
+    reading = await sensor_service.get_latest(db, final_device_id)
     if reading is None:
-        raise HTTPException(status_code=404, detail=f"No readings found for device '{device_id}'")
+        raise HTTPException(
+            status_code=404, 
+            detail=f"No readings found for device '{final_device_id}'"
+        )
     return reading
 
 

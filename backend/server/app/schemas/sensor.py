@@ -133,31 +133,35 @@ class SensorPayload(BaseModel):
 class SensorReadingOut(BaseModel):
     """API response shape for a single sensor reading (PRD §11).
 
-    Field names reflect DB column names — not firmware aliases.
-    This contract is stable; the frontend depends on these exact names.
+    Field names reflect DB column names, but aliases are used for 
+    serialization to match the frontend's expected keys.
     """
 
     time: datetime
-    device_id: str
-    soil_pct: float | None
-    ph: float | None
-    tds_ppm: float | None
-    temp_c: float | None
-    humidity_pct: float | None
-    rain_raw: int | None
-    motion: bool | None
-    npk_n: int | None
-    npk_p: int | None
-    npk_k: int | None
-    npk_ok: bool | None
-    leaf_r: int | None
-    leaf_g: int | None
-    leaf_b: int | None
-    pump_on: bool
-    mode: str | None
-    uptime_s: int | None
+    device_id: str = Field(serialization_alias="deviceid")
+    soil_pct: float | None = Field(default=None, serialization_alias="soilpct")
+    ph: float | None = None
+    tds_ppm: float | None = Field(default=None, serialization_alias="tdsppm")
+    temp_c: float | None = Field(default=None, serialization_alias="tempc")
+    humidity_pct: float | None = Field(default=None, serialization_alias="humiditypct")
+    rain_raw: int | None = Field(default=None, serialization_alias="rainraw")
+    motion: bool | None = None
+    npk_n: int | None = Field(default=None, serialization_alias="npkn")
+    npk_p: int | None = Field(default=None, serialization_alias="npkp")
+    npk_k: int | None = Field(default=None, serialization_alias="npkk")
+    npk_ok: bool | None = None
+    leaf_r: int | None = Field(default=None, serialization_alias="leafr")
+    leaf_g: int | None = Field(default=None, serialization_alias="leafg")
+    leaf_b: int | None = Field(default=None, serialization_alias="leafb")
+    pump_on: bool = Field(default=False, serialization_alias="pumpon")
+    mode: str | None = None
+    uptime_s: int | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        serialize_by_alias=True  # Ensure aliases are used in JSON response
+    )
 
 
 class SensorHistoryResponse(BaseModel):

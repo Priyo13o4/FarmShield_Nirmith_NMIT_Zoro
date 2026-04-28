@@ -15,6 +15,7 @@ from contextlib import asynccontextmanager
 
 import structlog
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.api.v1.router import router as api_v1_router
@@ -138,3 +139,21 @@ register_exception_handlers(app)
 
 # Include API router
 app.include_router(api_v1_router)
+
+# ── CORS Middleware ──────────────────────────────────────────────────────
+# Allow frontend to communicate with backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with specific frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ── Root Health Redirect ──────────────────────────────────────────────────
+# Redirect /health to /api/v1/health to match frontend expectations
+@app.get("/health", include_in_schema=False)
+async def health_redirect():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/api/v1/health")
