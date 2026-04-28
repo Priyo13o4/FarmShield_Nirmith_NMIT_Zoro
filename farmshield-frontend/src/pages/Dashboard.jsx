@@ -27,6 +27,7 @@ export default function Dashboard() {
   const {
     sensorData,
     alerts,
+    pumpOn,
     pumpMode,
     commandPump,
     commandMode,
@@ -40,7 +41,6 @@ export default function Dashboard() {
   const soilValue = rawSoil != null ? Number(rawSoil) : null
   const rawTemp = sensorData?.tempC ?? sensorData?.temperatureC
   const tempValue = rawTemp != null ? Number(rawTemp) : null
-  const pumpOn = Boolean(sensorData?.pumpOn ?? sensorData?.pumpState === 'ON')
   const activeAlertCount = alerts.filter((alert) => !alert.acknowledged).length
 
   const kpiItems = useMemo(
@@ -122,7 +122,7 @@ export default function Dashboard() {
           const iconColor = TONE_COLORS[kpi.tone] || TONE_COLORS.unknown
           return (
             <article key={kpi.key} className="kpi-card">
-              <div className="kpi-label" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+              <div className="kpi-label">
                 <Icon size={16} style={{ color: iconColor }} aria-hidden="true" />
                 <span>{kpi.label}</span>
               </div>

@@ -7,7 +7,7 @@ import { useFarm } from '../context/FarmContext'
 export default function Controls() {
   const { t } = useTranslation()
   const { 
-    sensorData, 
+    pumpOn,
     pumpMode, 
     commandPump, 
     commandMode, 
@@ -19,7 +19,6 @@ export default function Controls() {
   const [errorMessage, setErrorMessage] = useState('')
   const [lastCommandTime, setLastCommandTime] = useState('')
 
-  const pumpOn = Boolean(sensorData?.pumpOn ?? sensorData?.pumpon ?? sensorData?.pumpState === 'ON')
   const pumpState = pumpOn ? 'ON' : 'OFF'
 
   async function handlePumpToggle() {

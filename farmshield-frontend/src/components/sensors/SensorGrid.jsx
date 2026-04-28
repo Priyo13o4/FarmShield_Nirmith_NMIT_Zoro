@@ -190,15 +190,11 @@ export default function SensorGrid() {
               <span className="skeleton" style={{ width: '8rem', height: '2rem', borderRadius: 'var(--radius-2)' }} />
             </div>
           ) : (
-            <div className="sensor-value leaf-preview" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <div className="sensor-value leaf-preview">
               <span
                 className="leaf-color-dot"
                 style={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
                   backgroundColor: leafClass === '—' ? 'var(--color-text-tertiary)' : `rgb(${displayR}, ${displayG}, ${displayB})`,
-                  display: 'inline-block'
                 }}
                 aria-hidden="true"
               />

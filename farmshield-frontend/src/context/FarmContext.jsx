@@ -412,9 +412,12 @@ export function FarmProvider({ children }) {
     dispatch({ type: ACTIONS.SET_PUMP_MODE, payload: mode })
   }, [])
 
+  const pumpOn = Boolean(state.sensorData?.pumpOn)
+
   const value = useMemo(
     () => ({
       ...state,
+      pumpOn,
       activeNodeId,
       switchActiveNode,
       commandPump,
@@ -427,6 +430,7 @@ export function FarmProvider({ children }) {
     }),
     [
       state,
+      pumpOn,
       activeNodeId,
       switchActiveNode,
       commandPump,
