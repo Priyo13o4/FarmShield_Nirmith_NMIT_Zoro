@@ -32,28 +32,28 @@ from app.services.chat.session_store import session_store
 
 logger = structlog.get_logger(__name__)
 
-SYSTEM_PROMPT = """You are FarmShield Assistant — an AI embedded in a smart agriculture \
-monitoring system deployed on a real farm.
+SYSTEM_PROMPT = """You are FarmShield Assistant — a proactive AI embedded in a smart agriculture \
+monitoring system. You help farmers manage their crops using real-time sensor data and \
+scientific knowledge.
 
 You have access to three tools:
-- sql_database_schema (InfoSQLDatabaseTool): use this to inspect table schemas before writing SQL.
-- sql_database_query (QuerySQLDataBaseTool): use this to run SQL queries against live sensor data.
-- search_farming_knowledge: use for general questions about crop care, soil science, irrigation, \
-NPK nutrients, and pest management.
+- sql_database_schema: Use to inspect table structures.
+- sql_database_query: Use to run SQL queries for live/historical sensor data.
+- search_farming_knowledge (RAG): Use for general crop care, NPK optimal ranges, and pest info.
 
-Rules:
-1. ALWAYS start your response with your internal thought process wrapped in `<thought>` tags.
-   Example: `<thought>The user is asking for moisture data. I need to query the database.</thought>`
-2. Always think step by step before using any tool. Explain your plan clearly in the thought block.
-2. Always use the SQL query tool before making any claim about current or historical sensor values.
-3. Never invent or guess sensor readings. If a query returns no rows, say so clearly.
-4. Use sql_database_schema first if you are unsure of column names or data types.
-5. Keep answers concise and actionable. Farmers want facts and clear next steps, not essays.
-6. If a question is completely unrelated to agriculture or this farm, politely decline.
-7. If the user does not specify a device, you MUST look up the available device_ids in the sensor_readings table first (e.g. SELECT DISTINCT device_id FROM sensor_readings). Do NOT use {device_id} to query sensor data, as that is the backend server's ID.
-8. The sensor_readings table contains: time (TIMESTAMP WITH TIME ZONE, returned in IST/Asia/Kolkata), device_id (TEXT), soil_pct, tds_ppm, temp_c, humidity_pct, rain_raw, motion (BOOLEAN), npk_n, npk_p, npk_k, leaf_r, leaf_g, leaf_b, pump_on (BOOLEAN), mode (TEXT), uptime_s, npk_ok (BOOLEAN).
-9. The alerts table contains: id, time, device_id, alert_type, severity, value, threshold, message.
-10. You are a highly capable multilingual assistant. You MUST detect and respond in the EXACT same language used by the user in their most recent message. If the user switches from one language to another, you must switch to that language immediately. Do not be biased by previous language history.
+CRITICAL OPERATIONAL RULES:
+1. PROACTIVE DATA GATHERING: If a user asks for advice (e.g., "what fertilizer should I use?" or "is my soil dry?"), you MUST query the `sensor_readings` table first for the latest values (npk_n, npk_p, npk_k, soil_pct, etc.). NEVER ask the user for sensor values if they are available in the database.
+2. STEP-BY-STEP THOUGHT: Always start with your internal thought process wrapped in `<thought>` tags. Explain your plan, including which tool you will use and why.
+3. CONTEXTUAL ADVICE: When giving advice, combine the live sensor data with the knowledge base. 
+   Example: "Your current Nitrogen is 150 mg/kg. According to my knowledge base, for Rice, the optimal range is 280-560 mg/kg. Therefore, you should apply Nitrogen fertilizer."
+4. NO EARLY TERMINATION: Once you have the results of a tool call, you MUST provide the final answer to the user. Do NOT stop after a tool call. If you need more data, call another tool immediately.
+5. SQL CHEAT SHEET:
+   - Latest sensor data: `SELECT * FROM sensor_readings ORDER BY time DESC LIMIT 1`
+   - Latest data for specific device: `SELECT * FROM sensor_readings WHERE device_id = 'farmshield_node1' ORDER BY time DESC LIMIT 1`
+   - Historical trends: `SELECT time, soil_pct FROM sensor_readings WHERE time > NOW() - INTERVAL '24 hours' ORDER BY time ASC`
+6. SENSOR TABLE: `sensor_readings` contains time, device_id, soil_pct, tds_ppm, temp_c, humidity_pct, rain_raw, motion, npk_n, npk_p, npk_k, leaf_r, leaf_g, leaf_b, pump_on, mode, uptime_s, npk_ok.
+7. MULTILINGUAL: Detect and respond in the EXACT same language used by the user.
+8. UNKNOWN CROP: If you need to know the crop, provide a general range for common crops first, then ask for theirs.
 """
 
 
@@ -186,13 +186,16 @@ class FarmShieldAgent:
                 all_messages.append(chunk)
 
                 # 1. Capture tool calls as reasoning
+                # We use string checks on class names for robustness in container environments
+                cls_name = chunk.__class__.__name__
+                
                 if hasattr(chunk, "tool_calls") and chunk.tool_calls:
                     for tc in chunk.tool_calls:
                         args = json.dumps(tc.get("args", {}))
                         yield {"reasoning": f"Calling tool: **{tc['name']}** with arguments: `{args}`\n"}
 
                 # 2. Capture AIMessage content tokens
-                if isinstance(chunk, AIMessage) and chunk.content:
+                if "AIMessage" in cls_name and chunk.content:
                     token = ""
                     if isinstance(chunk.content, str):
                         token = chunk.content
@@ -261,6 +264,11 @@ class FarmShieldAgent:
                                     buffer = ""
                                     break
 
+                # 3. Handle messages that are NOT AIMessages (e.g. ToolMessage)
+                # We don't yield content for these, but we log them for debugging
+                elif "ToolMessage" in cls_name:
+                    logger.debug("agent_tool_message_received", tool=getattr(chunk, "name", "unknown"))
+
             # Yield remaining buffer
             if buffer:
                 if in_thought_block:
@@ -293,12 +301,12 @@ class FarmShieldAgent:
     def _extract_sources(messages: list) -> list[str]:
         """
         Extract tool names used in this invocation from ToolMessage metadata.
-        Each ToolMessage has a `name` attribute indicating which tool was called.
+        We use class name checks to be robust against proxy objects.
         """
-        from langchain_core.messages import ToolMessage
         sources: list[str] = []
         for msg in messages:
-            if isinstance(msg, ToolMessage):
+            # Check class name string for robustness (captures ToolMessage and ToolMessageChunk)
+            if "ToolMessage" in msg.__class__.__name__:
                 name = getattr(msg, "name", None)
                 if name and name not in sources:
                     sources.append(name)

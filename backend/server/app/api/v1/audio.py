@@ -27,7 +27,7 @@ logger = structlog.get_logger(__name__)
     summary="Latest audio inference result",
 )
 async def get_latest_audio(
-    deviceid: str = Query(default="farmshield-node-1"),
+    deviceid: str = Query(default="farmshield_node1"),
     db: AsyncSession = Depends(get_db),
     _=Depends(require_auth),
 ):
@@ -53,7 +53,7 @@ async def get_latest_audio(
     summary="Paginated audio inference history",
 )
 async def get_audio_history(
-    deviceid: str = Query(default="farmshield-node-1"),
+    deviceid: str = Query(default="farmshield_node1"),
     limit: int = Query(default=50, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),

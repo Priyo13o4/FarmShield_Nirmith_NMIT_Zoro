@@ -58,7 +58,8 @@ class WSManager {
     this.ws.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data)
-        if (payload.type === 'sensorreading') {
+        // Backend sends "sensor_reading" type. Also handle "sensorreading" for backward compat.
+        if (payload.type === 'sensorreading' || payload.type === 'sensor_reading') {
           this.emit('sensorData', {
             data: payload.data,
             mlOutput: payload.mlOutput,

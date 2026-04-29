@@ -14,16 +14,21 @@ const RANGE_OPTIONS = [
 ]
 
 const SENSOR_OPTIONS = ['soilPct', 'tempC', 'humidityPct', 'tdsPpm', 'rainMm']
-const MAX_SELECTED_SENSORS = 3
+const MAX_SELECTED_SENSORS = 5
 const HISTORY_LIMIT = 160
 
 function normalizeHistoryRows(payload) {
   const rows = Array.isArray(payload) ? payload : payload?.data || payload?.readings || payload?.items || []
   return rows.map((item) => {
-    const timestamp = item.timestamp || item.createdAt || new Date().toISOString()
+    const timestamp = item.time || item.timestamp || item.createdAt || new Date().toISOString()
     return {
       ...item,
       timestamp,
+      soilPct: item.soilPct ?? item.soilpct,
+      tempC: item.tempC ?? item.tempc,
+      humidityPct: item.humidityPct ?? item.humiditypct,
+      tdsPpm: item.tdsPpm ?? item.tdsppm,
+      rainMm: item.rainMm ?? item.rainraw,
       timestampLabel: new Date(timestamp).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',

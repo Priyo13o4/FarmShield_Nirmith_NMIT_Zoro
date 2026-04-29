@@ -55,7 +55,7 @@ export function getApiConfig(overrides = {}) {
 
 /** Get the legacy single device ID (used as the "active" node) */
 export function getDeviceId() {
-  return getStoredValue(LOCAL_KEYS.deviceId, 'esp32-node-1')
+  return getStoredValue(LOCAL_KEYS.deviceId, 'farmshield_node1')
 }
 
 /** Get all registered device IDs as an array */
@@ -73,7 +73,7 @@ export function getDeviceIds() {
   }
   // Fallback: migrate legacy single device ID
   const legacy = getDeviceId()
-  return legacy ? [legacy] : ['esp32-node-1']
+  return legacy ? [legacy] : ['farmshield_node1']
 }
 
 /** Save all device IDs */
@@ -212,7 +212,7 @@ export const api = {
     },
   },
   sensors: {
-    latest(deviceId = 'esp32-node-1') {
+    latest(deviceId = 'farmshield_node1') {
       if (isDemoMode) {
         return withDemoDelay({
           ...getDemoLatestReadingUi(),

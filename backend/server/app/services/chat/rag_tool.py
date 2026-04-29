@@ -22,7 +22,7 @@ import structlog
 from langchain.tools import tool
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_text_splitters import CharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 
 logger = structlog.get_logger(__name__)
@@ -64,8 +64,10 @@ class RagTool:
                 note="Calling Gemini Embeddings API — this may take 10-30 s",
             )
             docs = self._load_knowledge_docs()
-            chunks = CharacterTextSplitter(
-                chunk_size=500, chunk_overlap=50
+            chunks = RecursiveCharacterTextSplitter(
+                chunk_size=700, 
+                chunk_overlap=100,
+                separators=["\n## ", "\n### ", "\n\n", "\n", " "]
             ).split_documents(docs)
             logger.info("faiss_index_chunked", chunk_count=len(chunks))
 
@@ -78,7 +80,7 @@ class RagTool:
             vectorstore.save_local(str(index_path))
             logger.info("faiss_index_built_and_saved", path=str(index_path))
 
-        self._retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+        self._retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
         self._ready = True
 
     def get_tool(self) -> Callable:

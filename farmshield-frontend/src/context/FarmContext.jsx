@@ -294,8 +294,9 @@ export function FarmProvider({ children }) {
       dispatch({ type: ACTIONS.SET_LOADING, payload: false })
     })
 
-    const unsubscribeSensorData = wsManager.on('sensorData', (payload) => {
-      const deviceId = payload.data?.deviceid || payload.data?.deviceId || activeNodeId
+    const unsubscribeSensorData = wsManager.on('sensorData', (rawPayload) => {
+      const deviceId = rawPayload.data?.deviceid || rawPayload.data?.deviceId || activeNodeId
+      const payload = normalizeLatestPayload(rawPayload)
 
       // Store in nodesData map
       dispatch({

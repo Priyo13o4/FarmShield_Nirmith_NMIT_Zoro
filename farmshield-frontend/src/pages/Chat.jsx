@@ -167,6 +167,16 @@ export default function Chat() {
                  m.id === streamingId ? { ...m, reasoning: (m.reasoning || '') + data.text } : m
                ))
                scrollToBottom()
+            } else if (data.event === 'sources') {
+               setMessages(prev => prev.map(m => {
+                 if (m.id === streamingId) {
+                   const currSources = m.sources || []
+                   const newSources = data.sources.filter(s => !currSources.includes(s))
+                   return { ...m, sources: [...currSources, ...newSources] }
+                 }
+                 return m
+               }))
+               scrollToBottom()
             } else if (data.event === 'user_transcript') {
                setMessages(prev => prev.map(m => 
                  m.id === userStreamingId ? { ...m, content: (m.content || '') + data.text } : m
