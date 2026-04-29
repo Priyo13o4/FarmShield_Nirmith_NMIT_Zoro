@@ -18,7 +18,7 @@ from app.services.chat.session_store import session_store
 from app.services.chat.agent import farm_agent, SYSTEM_PROMPT
 
 logger = structlog.get_logger(__name__)
-router = APIRouter()
+router = APIRouter(prefix="/chat/voice", tags=["voice"])
 
 def sql_database_schema(table_names: str) -> str:
     """Inspect table schemas before writing SQL."""
@@ -41,7 +41,7 @@ def search_farming_knowledge(query: str) -> str:
     except Exception as e:
         return f"Error: {e}"
 
-@router.websocket("/chat/voice/ws")
+@router.websocket("/ws")
 async def voice_websocket(
     websocket: WebSocket,
     session_id: str = Query(...),
