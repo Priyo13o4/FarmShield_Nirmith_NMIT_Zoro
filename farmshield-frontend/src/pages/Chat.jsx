@@ -100,7 +100,7 @@ export default function Chat() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       const { url } = getApiConfig()
-      const wsUrl = `${url.replace(/^http/, 'ws')}/api/v1/chat/voice/ws?session_id=${sessionId}&api_key=${localStorage.getItem('fs_api_key') || ''}`
+      const wsUrl = `${url.replace(/^http/, 'ws')}/api/v1/chat/voice/ws?session_id=${sessionId}`
       const ws = new WebSocket(wsUrl)
       voiceWsRef.current = ws
 
