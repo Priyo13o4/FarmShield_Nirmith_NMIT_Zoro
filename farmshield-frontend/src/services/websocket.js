@@ -45,7 +45,9 @@ class WSManager {
       return
     }
 
-    const wsUrl = `${baseUrl.replace('http', 'ws')}${WS_PATH}`
+    const wsUrl = `${baseUrl.replace('http', 'ws')}${WS_PATH}?api_key=${encodeURIComponent(
+      apiKey || ''
+    )}`
 
     this.ws = new WebSocket(wsUrl)
 

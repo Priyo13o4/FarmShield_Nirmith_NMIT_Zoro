@@ -145,7 +145,6 @@ async function request(method, path, body, params, options = {}) {
   const endpoint = `${url}${API_PREFIX}${path}${buildQuery(params)}`
   const headers = {
     Authorization: `Bearer ${apiKey || ''}`,
-    'ngrok-skip-browser-warning': 'true',
   }
 
   if (method === 'POST' || method === 'PATCH') {
@@ -198,9 +197,6 @@ export const api = {
       const { url } = getApiConfig(overrides)
       const response = await fetch(`${url}/health`, {
         method: 'GET',
-        headers: {
-          'ngrok-skip-browser-warning': 'true',
-        }
       })
 
       if (!response.ok) {
