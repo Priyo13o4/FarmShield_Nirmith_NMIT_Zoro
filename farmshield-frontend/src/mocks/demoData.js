@@ -17,7 +17,6 @@ function sinusoid(seed, amplitude, period, phase = 0) {
 
 function buildReading(seed, timestamp, overrides = {}) {
   const soilpct = clamp(round(50 + sinusoid(seed, 7, 36) + sinusoid(seed, 2.5, 12), 1), 32, 62)
-  const ph = clamp(round(6.7 + sinusoid(seed, 0.24, 40), 2), 6.2, 7.2)
   const tdsppm = clamp(Math.round(520 + sinusoid(seed, 120, 30) + sinusoid(seed, 45, 9)), 280, 780)
   const tempc = clamp(round(31 + sinusoid(seed, 2.4, 28) + sinusoid(seed, 0.9, 10), 1), 27.2, 34.4)
   const humiditypct = clamp(round(66 + sinusoid(seed, 8.5, 30), 1), 54, 76)
@@ -34,7 +33,6 @@ function buildReading(seed, timestamp, overrides = {}) {
     time: new Date(timestamp).toISOString(),
     deviceid: demoDeviceId,
     soilpct,
-    ph,
     tdsppm,
     tempc,
     humiditypct,
@@ -64,7 +62,6 @@ function buildRange(hours, points) {
 
 export const demoLatestSensorReading = buildReading(99, Date.now(), {
   soilpct: 51.4,
-  ph: 6.8,
   tdsppm: 548,
   tempc: 31.2,
   humiditypct: 68.5,
@@ -114,15 +111,7 @@ export const demoAlerts = [
     message: 'Intrusion detected near northern field gate.',
     acknowledged: false,
   },
-  {
-    id: 'demo-alert-004',
-    time: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-    deviceid: demoDeviceId,
-    type: 'PH_LOW',
-    severity: 'WARNING',
-    message: 'pH level dropped below the optimal hydroponic range.',
-    acknowledged: false,
-  },
+
   {
     id: 'demo-alert-005',
     time: new Date(Date.now() - DAY_MS).toISOString(),
@@ -179,7 +168,6 @@ export function readingToUiShape(reading) {
     time: reading.time,
     deviceid: reading.deviceid,
     soilPct: reading.soilpct,
-    ph: reading.ph,
     tdsPpm: reading.tdsppm,
     tempC: reading.tempc,
     humidityPct: reading.humiditypct,
@@ -203,7 +191,6 @@ export function generateNextDemoReading(previousReading, tick = 1) {
     pumpon: source.pumpon,
     motion: tick % 9 === 0,
     soilpct: clamp(round(source.soilpct + sinusoid(seed, 1.7, 11), 1), 34, 61),
-    ph: clamp(round(source.ph + sinusoid(seed, 0.06, 14), 2), 6.3, 7.2),
     tdsppm: clamp(Math.round(source.tdsppm + sinusoid(seed, 26, 13)), 300, 740),
     tempc: clamp(round(source.tempc + sinusoid(seed, 0.45, 10), 1), 27.5, 34.5),
     humiditypct: clamp(round(source.humiditypct + sinusoid(seed, 1.8, 12), 1), 55, 76),
@@ -230,11 +217,7 @@ export function createDemoAlert(tick = 1) {
       severity: 'CRITICAL',
       message: 'Unexpected motion detected near storage perimeter.',
     },
-    {
-      type: 'PH_LOW',
-      severity: 'WARNING',
-      message: 'Nutrient solution pH is below the recommended range.',
-    },
+
   ]
 
   const template = templates[tick % templates.length]
@@ -294,7 +277,6 @@ export function historyToCsv(readings) {
     'time',
     'deviceid',
     'soilpct',
-    'ph',
     'tdsppm',
     'tempc',
     'humiditypct',

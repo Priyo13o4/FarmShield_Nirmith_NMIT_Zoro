@@ -31,7 +31,7 @@ def upgrade() -> None:
         sa.Column("time", sa.DateTime(timezone=True), nullable=False),
         sa.Column("device_id", sa.Text(), nullable=False, server_default="esp32-node-1"),
         sa.Column("soil_pct", sa.Double(), nullable=True),
-        sa.Column("ph", sa.Double(), nullable=True),
+
         sa.Column("tds_ppm", sa.Double(), nullable=True),
         sa.Column("temp_c", sa.Double(), nullable=True),
         sa.Column("humidity_pct", sa.Double(), nullable=True),

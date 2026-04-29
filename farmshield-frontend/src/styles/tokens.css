@@ -33,7 +33,6 @@
   --color-shadow: oklch(0.06 0.02 150 / 0.42);
 
   --chart-soil: oklch(0.72 0.11 145);
-  --chart-ph: oklch(0.72 0.09 242);
   --chart-tds: oklch(0.73 0.13 80);
   --chart-temp: oklch(0.69 0.12 35);
   --chart-humidity: oklch(0.72 0.11 205);

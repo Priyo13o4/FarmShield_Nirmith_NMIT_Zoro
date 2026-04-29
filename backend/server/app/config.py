@@ -65,12 +65,13 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     log_json: bool = False
 
+    # ── Dev / Demo Overrides ─────────────────────────────────────────────
+    npk_override_enabled: bool = False
+
     # ── Alert Thresholds (PRD §13) ──────────────────────────────────────
     alert_soil_dry_pct: float = 30.0
     alert_soil_flood_pct: float = 85.0
     alert_temp_high_c: float = 38.0
-    alert_ph_low: float = 5.5
-    alert_ph_high: float = 7.5
     alert_tds_high_ppm: float = 1500.0
     alert_rain_dry_raw: int = 2500
 

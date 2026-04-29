@@ -70,25 +70,6 @@ def evaluate_thresholds(reading: SensorReadingOut) -> list[dict]:
             ),
         })
 
-    if reading.ph is not None and reading.ph < settings.alert_ph_low:
-        alerts.append({
-            "type": "PH_LOW",
-            "severity": "WARNING",
-            "message": (
-                f"pH below threshold "
-                f"({reading.ph} < {settings.alert_ph_low})"
-            ),
-        })
-
-    if reading.ph is not None and reading.ph > settings.alert_ph_high:
-        alerts.append({
-            "type": "PH_HIGH",
-            "severity": "WARNING",
-            "message": (
-                f"pH above threshold "
-                f"({reading.ph} > {settings.alert_ph_high})"
-            ),
-        })
 
     if reading.tds_ppm is not None and reading.tds_ppm > settings.alert_tds_high_ppm:
         alerts.append({

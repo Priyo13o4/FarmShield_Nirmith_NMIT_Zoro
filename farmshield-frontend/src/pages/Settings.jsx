@@ -23,6 +23,7 @@ export default function Settings() {
   const [newDeviceId, setNewDeviceId] = useState('')
   const [language, setLanguage] = useState('en')
   const [showApiKey, setShowApiKey] = useState(false)
+  const [npkOverride, setNpkOverride] = useState('null')
 
   const [isTesting, setIsTesting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -38,6 +39,10 @@ export default function Settings() {
     setApiKey(config.apiKey)
     setLocalDeviceIds(getDeviceIds())
     setLanguage(storedLanguage)
+
+    api.dev.getNpkOverride()
+      .then(res => setNpkOverride(res.active_profile || 'null'))
+      .catch(e => console.error('Failed to load NPK override', e))
   }, [i18n.resolvedLanguage])
 
   function handleAddDevice() {
@@ -105,6 +110,16 @@ export default function Settings() {
     setLanguage(nextLanguage)
     await i18n.changeLanguage(nextLanguage)
     loadGoogleFont(nextLanguage)
+  }
+
+  async function handleNpkOverrideChange(e) {
+    const profile = e.target.value
+    setNpkOverride(profile)
+    try {
+      await api.dev.setNpkOverride(profile)
+    } catch (err) {
+      console.error('Failed to set NPK override', err)
+    }
   }
 
   return (
@@ -220,6 +235,31 @@ export default function Settings() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="form-field">
+          <details className="advanced-settings-details">
+            <summary className="field-label" style={{ cursor: 'pointer', outline: 'none', userSelect: 'none' }}>
+              Advanced Settings
+            </summary>
+            <div className="form-field" style={{ marginTop: 'var(--space-4)' }}>
+              <label className="field-label" htmlFor="npk-override">
+                NPK Sensor Profile
+              </label>
+              <select 
+                id="npk-override"
+                className="field-input"
+                value={npkOverride}
+                onChange={handleNpkOverrideChange}
+              >
+                <option value="sample1">Sample 1 — Acidic Red Soil (pH 5.82)</option>
+                <option value="sample2">Sample 2 — Red Laterite (pH 5.94)</option>
+                <option value="sample3">Sample 3 — Red Laterite (pH 5.96)</option>
+                <option value="random">Random — Bangalore Roadside Soil</option>
+                <option value="null">Off (raw sensor)</option>
+              </select>
+            </div>
+          </details>
         </div>
 
         <div className="page-header-row">

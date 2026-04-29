@@ -45,7 +45,7 @@ class WSManager {
       return
     }
 
-    const wsUrl = `${baseUrl.replace('http', 'ws')}${WS_PATH}?apikey=${encodeURIComponent(
+    const wsUrl = `${baseUrl.replace('http', 'ws')}${WS_PATH}?api_key=${encodeURIComponent(
       apiKey || ''
     )}`
 

@@ -58,6 +58,12 @@ async def process(raw_payload: dict) -> None:
         )
         return
 
+    # ── Step 1.5: NPK override hook ─────────────────────────────────────
+    if settings.npk_override_enabled:
+        from app.services.dev.npk_override import npk_override
+        payload.npk_n, payload.npk_p, payload.npk_k, payload.npk_ok = \
+            npk_override.apply(payload.npk_n, payload.npk_p, payload.npk_k, payload.npk_ok)
+
     # ── Step 2: Convert timestamp ───────────────────────────────────────
     if payload.ts is not None:
         try:
@@ -87,7 +93,6 @@ async def process(raw_payload: dict) -> None:
         "time": reading_time,
         "device_id": payload.device_id,
         "soil_pct": payload.soil_pct,
-        "ph": payload.ph,
         "tds_ppm": payload.tds_ppm,
         "temp_c": payload.temp_c,
         "humidity_pct": payload.humidity_pct,
@@ -152,7 +157,6 @@ async def process(raw_payload: dict) -> None:
             k: v
             for k, v in {
                 "soil_pct": payload.soil_pct,
-                "ph": payload.ph,
                 "tds_ppm": payload.tds_ppm,
                 "temp_c": payload.temp_c,
                 "humidity_pct": payload.humidity_pct,

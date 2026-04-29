@@ -19,7 +19,7 @@ const LOCAL_KEYS = {
 }
 
 const API_PREFIX = '/api/v1'
-const DEFAULT_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const DEFAULT_BASE_URL = import.meta.env.VITE_API_URL !== undefined ? import.meta.env.VITE_API_URL : 'http://localhost:8000'
 const DEFAULT_API_KEY = import.meta.env.VITE_API_KEY || ''
 const CSV_FILE_NAME = 'farmshield-export.csv'
 const DEMO_LATENCY_MS = 180
@@ -46,8 +46,9 @@ function getStoredValue(key, fallback = '') {
 }
 
 export function getApiConfig(overrides = {}) {
+  const storedUrl = getStoredValue(LOCAL_KEYS.apiUrl, DEFAULT_BASE_URL)
   return {
-    url: overrides.url || getStoredValue(LOCAL_KEYS.apiUrl, DEFAULT_BASE_URL),
+    url: overrides.url || storedUrl || (typeof window !== 'undefined' ? window.location.origin : ''),
     apiKey: overrides.apiKey ?? getStoredValue(LOCAL_KEYS.apiKey, DEFAULT_API_KEY),
   }
 }
@@ -462,4 +463,26 @@ export const api = {
       return request('DELETE', `/chat/session/${sessionId}`)
     },
   },
+  dev: {
+    getNpkOverride() {
+      if (isDemoMode) {
+        return withDemoDelay({
+          active_profile: 'null',
+          label: 'Override OFF',
+          ranges: null,
+        })
+      }
+      return request('GET', '/dev/npk-override')
+    },
+    setNpkOverride(profile) {
+      if (isDemoMode) {
+        return withDemoDelay({
+          active_profile: profile,
+          label: profile === 'null' ? 'Override OFF' : profile,
+          ranges: null,
+        })
+      }
+      return request('POST', '/dev/npk-override', { profile })
+    }
+  }
 }

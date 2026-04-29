@@ -10,7 +10,10 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { useEffect, useState } from 'react'
+
 import { useFarm } from '../../context/FarmContext'
+import { api } from '../../services/api'
 import { getSensorStatus } from '../../utils/sensorStatus'
 import SensorCard from './SensorCard'
 
@@ -21,12 +24,7 @@ const SENSOR_CONFIG = [
     unitKey: 'sensors.units.percent',
     icon: Droplets,
   },
-  {
-    sensorKey: 'ph',
-    labelKey: 'sensors.ph',
-    unitKey: 'sensors.units.ph',
-    icon: FlaskConical,
-  },
+
   {
     sensorKey: 'tdsPpm',
     labelKey: 'sensors.tds',
@@ -81,7 +79,6 @@ function readSensorValue(sensorData, key) {
 
   const aliases = {
     soilPct: ['soilPct', 'soil', 'soilMoisturePct'],
-    ph: ['ph'],
     tdsPpm: ['tdsPpm', 'tds'],
     tempC: ['tempC', 'temperature', 'temperatureC'],
     humidityPct: ['humidityPct', 'humidity'],
@@ -119,6 +116,13 @@ function classifyLeafHealth(red, green, blue) {
 export default function SensorGrid() {
   const { t } = useTranslation()
   const { sensorData, isLoading } = useFarm()
+  const [npkOverride, setNpkOverride] = useState('null')
+
+  useEffect(() => {
+    api.dev.getNpkOverride()
+      .then(res => setNpkOverride(res.active_profile || 'null'))
+      .catch(e => console.error('Failed to load NPK override', e))
+  }, [])
 
   const rawR = readSensorValue(sensorData, 'leafR')
   const leafR = rawR != null ? Number(rawR) : null

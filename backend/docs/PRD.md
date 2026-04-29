@@ -455,7 +455,7 @@ services/ingestion.process()
 {
   "device_id": "esp32-node-1",
   "soil_pct": 42.5,
-  "ph": 6.81,
+
   "tds_ppm": 410.0,
   "temp_c": 29.1,
   "humidity_pct": 58.0,
@@ -517,7 +517,7 @@ CREATE TABLE sensor_readings (
     time            TIMESTAMPTZ     NOT NULL,
     device_id       TEXT            NOT NULL    DEFAULT 'esp32-node-1',
     soil_pct        DOUBLE PRECISION,
-    ph              DOUBLE PRECISION,
+
     tds_ppm         DOUBLE PRECISION,
     temp_c          DOUBLE PRECISION,
     humidity_pct    DOUBLE PRECISION,
@@ -747,7 +747,7 @@ class SensorReadingOut(BaseModel):
     time: datetime
     device_id: str
     soil_pct: float | None
-    ph: float | None
+
     tds_ppm: float | None
     temp_c: float | None
     humidity_pct: float | None
@@ -828,7 +828,7 @@ The ingestion service passes this dict to `runner.predict()`:
 ```python
 {
     "soil_pct": float,
-    "ph": float,
+
     "tds_ppm": float,
     "temp_c": float,
     "humidity_pct": float,
@@ -867,8 +867,7 @@ Alert thresholds are **not hardcoded**. They must be defined as typed attributes
 ALERT_SOIL_DRY_PCT=30.0        # Soil below this → SOIL_DRY WARNING
 ALERT_SOIL_FLOOD_PCT=85.0      # Soil above this → SOIL_FLOOD WARNING
 ALERT_TEMP_HIGH_C=38.0         # Temp above this → TEMP_HIGH WARNING
-ALERT_PH_LOW=5.5               # pH below this → PH_LOW WARNING
-ALERT_PH_HIGH=7.5              # pH above this → PH_HIGH WARNING
+
 ALERT_TDS_HIGH_PPM=1500.0      # TDS above this → TDS_HIGH WARNING
 ALERT_RAIN_DRY_RAW=2500        # Rain raw reading above this = dry conditions
 ```

@@ -32,7 +32,7 @@ const char *DEVICE_ID = "farmshield_node1";
 // Pin map
 #define SOIL_PIN 34
 #define TDS_PIN 35
-#define PH_PIN 32
+
 #define RAIN_PIN 33
 #define DHT_PIN 4
 #define PIR_PIN 13
@@ -66,15 +66,13 @@ const float VREF = 3.3;
 const int ADC_RES = 4095;
 float SOIL_DRY_RAW = 3000; // ADC reading in air
 float SOIL_WET_RAW = 1200; // ADC reading in water
-float PH_SLOPE = -5.70;    // pH = SLOPE * V + OFFSET
-float PH_OFFSET = 21.34;
+
 
 // Thresholds (tune to crop)
 float TH_SOIL_LOW = 30.0; // %  -> below = irrigate
 float TH_SOIL_OK = 60.0;  // %  -> above = stop
 float TH_TEMP_HIGH = 38.0;
-float TH_PH_LO = 5.5;
-float TH_PH_HI = 7.5;
+
 float TH_TDS_HI = 1500.0;
 int TH_RAIN_DRY = 2500; // higher = wetter (analog)
 
@@ -168,20 +166,7 @@ float readTDS(float tempC) {
   return (133.42 * vc * vc * vc - 255.86 * vc * vc + 857.39 * vc) * 0.5;
 }
 
-float readPH() {
-  long s = 0;
-  for (int i = 0; i < 20; i++) {
-    s += analogRead(PH_PIN);
-    delay(5);
-  }
-  float v = (s / 20.0) * VREF / ADC_RES;
-  float ph = PH_SLOPE * v + PH_OFFSET;
-  if (ph < 0)
-    ph = 0;
-  if (ph > 14)
-    ph = 14;
-  return ph;
-}
+
 
 int readRain() { return 4095 - analogRead(RAIN_PIN); } // ~0 dry, ~4095 wet
 bool readMotion() { return digitalRead(PIR_PIN) == HIGH; }
@@ -218,7 +203,7 @@ void setup() {
 
   pinMode(SOIL_PIN, INPUT);
   pinMode(TDS_PIN, INPUT);
-  pinMode(PH_PIN, INPUT);
+
   pinMode(RAIN_PIN, INPUT);
   pinMode(PIR_PIN, INPUT);
   pinMode(TCS_S0, OUTPUT);
@@ -275,7 +260,7 @@ void loop() {
 
   float soil = readSoilPct();
   float tds = readTDS(t > 0 ? t : 25.0);
-  float ph = readPH();
+
   int rain = readRain();
   bool mot = readMotion();
   int r = 0, g = 0, b = 0;
@@ -303,8 +288,7 @@ void loop() {
     alertMsg = "Intruder/motion detected";
   else if (t > TH_TEMP_HIGH)
     alertMsg = "High temperature";
-  else if (ph < TH_PH_LO || ph > TH_PH_HI)
-    alertMsg = "Soil pH out of range";
+
   else if (tds > TH_TDS_HI)
     alertMsg = "Water TDS too high";
 
@@ -318,7 +302,7 @@ void loop() {
   doc["humidity"] = h;
   doc["soil"] = soil;
   doc["tds"] = tds;
-  doc["ph"] = ph;
+
   doc["rain"] = rain;
   doc["motion"] = mot;
   JsonObject c = doc.createNestedObject("color");
@@ -342,6 +326,6 @@ void loop() {
     mqtt.publish("farmshield/alerts", alertMsg.c_str());
 
   Serial.printf(
-      "T=%.1f H=%.0f Soil=%.1f%% pH=%.2f TDS=%.0f Rain=%d Mot=%d Pump=%d %s\n",
-      t, h, soil, ph, tds, rain, mot, pumpState, alertMsg.c_str());
+      "T=%.1f H=%.0f Soil=%.1f%% TDS=%.0f Rain=%d Mot=%d Pump=%d %s\n",
+      t, h, soil, tds, rain, mot, pumpState, alertMsg.c_str());
 }

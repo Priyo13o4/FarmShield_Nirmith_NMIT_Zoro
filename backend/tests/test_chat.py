@@ -205,7 +205,7 @@ async def test_chat_agent_error_graceful(chat_client, mock_agent_error):
     """Agent returning error dict → still 200, not 500."""
     response = await chat_client.post(
         "/api/v1/chat/message",
-        json={"message": "What is the soil pH?", "session_id": "test-session"},
+        json={"message": "What is the soil temperature?", "session_id": "test-session"},
     )
     assert response.status_code == 200
     data = response.json()

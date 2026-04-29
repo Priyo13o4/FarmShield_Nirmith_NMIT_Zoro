@@ -24,6 +24,10 @@ router.include_router(alerts.router)
 # WebSocket
 router.include_router(ws.router)
 
+# Dev overrides
+from app.api.v1 import dev
+router.include_router(dev.router)
+
 # Chat — conditionally registered (Phase 8c)
 # router.py is imported after Settings() is instantiated, so this works.
 if settings.chat_enabled:

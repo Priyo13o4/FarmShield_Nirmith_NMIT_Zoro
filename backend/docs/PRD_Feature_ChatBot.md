@@ -236,7 +236,7 @@ The `device_id` placeholder is filled from `settings.mqtt_client_id` at load tim
 def query_sensor_data(question: str) -> str:
     """
     Query live or historical sensor data from the FarmShield database.
-    Use for ANY question about soil moisture, pH, temperature, humidity,
+    Use for ANY question about soil moisture, temperature, humidity,
     TDS, rain, NPK levels, leaf colour, pump status, or alerts.
     Input: a natural language question about farm data.
     Output: a text answer derived from real database results.
@@ -325,7 +325,7 @@ Without this mount, the index rebuilds from scratch on every container restart, 
 
 | File | Contents |
 |---|---|
-| `soil_guide.md` | Soil pH ranges per crop type, moisture requirements, interpretation of NPK values |
+| `soil_guide.md` | Soil moisture requirements, interpretation of NPK values |
 | `irrigation_guide.md` | When to irrigate, TDS thresholds for water quality, rain sensor interpretation |
 | `npk_reference.md` | Nitrogen/phosphorus/potassium deficiency symptoms, recommended NPK ratios |
 

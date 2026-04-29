@@ -2,29 +2,6 @@
 # Source: ICAR (Indian Council of Agricultural Research) crop management guidelines.
 # This file is committed to the repo. The FAISS index built from it is gitignored.
 
-## Soil pH Ranges by Crop
-
-| Crop       | Optimal pH | Notes                                      |
-|------------|------------|--------------------------------------------|
-| Rice       | 5.5 – 6.5  | Tolerates slight acidity; avoid above 7.0  |
-| Wheat      | 6.0 – 7.5  | Prefers near-neutral; sensitive to acidity |
-| Tomato     | 5.8 – 6.8  | Slight acidity preferred                   |
-| Sugarcane  | 6.0 – 7.5  | Wide range; avoid waterlogging             |
-| Cotton     | 6.0 – 8.0  | Tolerates alkalinity better than most      |
-| Potato     | 4.8 – 5.5  | Strongly acid-preferring                   |
-| Maize      | 5.8 – 7.0  | Neutral preferred                          |
-| Groundnut  | 5.5 – 6.5  | Same as rice; needs calcium at low pH      |
-| Soybean    | 6.0 – 7.0  | Neutral preferred for nodule formation     |
-| Onion      | 5.8 – 7.0  | Neutral; sensitive to acidic irrigation    |
-
-## Interpreting pH Sensor Readings (FarmShield 0–14 scale)
-
-- **Below 4.5** — Very strongly acidic. Apply lime immediately. Most crops will show iron/manganese toxicity.
-- **4.5 – 5.5** — Strongly acidic. Apply dolomitic lime. Rice, potato can survive but most crops suffer.
-- **5.5 – 6.5** — Slightly acidic. Ideal for rice, tomato, groundnut. Most nutrients are available.
-- **6.5 – 7.5** — Neutral. Ideal for wheat, maize, soybean. Maximum nutrient availability.
-- **7.5 – 8.5** — Slightly alkaline. Apply sulfur or acidifying fertilizers. Micronutrient deficiencies common.
-- **Above 8.5** — Strongly alkaline. Serious nutrient lockout. Gypsum application required.
 
 ## Soil Moisture % Interpretation (FarmShield sensor)
 

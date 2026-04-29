@@ -15,7 +15,6 @@ const CHART_HEIGHT = 'var(--chart-height)'
 
 const SENSOR_LINE_COLOR = {
   soilPct: 'var(--chart-soil)',
-  ph: 'var(--chart-ph)',
   tdsPpm: 'var(--chart-tds)',
   tempC: 'var(--chart-temp)',
   humidityPct: 'var(--chart-humidity)',

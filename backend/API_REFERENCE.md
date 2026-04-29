@@ -88,7 +88,7 @@ Returns the most recent sensor reading for a device.
   "time": "2026-04-27T17:40:38.720815Z",
   "device_id": "farmshield_node1",
   "soil_pct": 42.5,
-  "ph": 6.81,
+
   "tds_ppm": 410.0,
   "temp_c": 29.1,
   "humidity_pct": 58.0,
@@ -116,7 +116,7 @@ Returns the most recent sensor reading for a device.
 | `time` | `string` (ISO 8601) | — | Timestamp when reading was stored (UTC) |
 | `device_id` | `string` | — | Matches firmware `DEVICE_ID` constant |
 | `soil_pct` | `float \| null` | % | 0–100, null = sensor failure |
-| `ph` | `float \| null` | pH | 0–14 |
+
 | `tds_ppm` | `float \| null` | ppm | Total dissolved solids |
 | `temp_c` | `float \| null` | °C | Air temperature (DHT11) |
 | `humidity_pct` | `float \| null` | % | Relative humidity |
@@ -187,8 +187,8 @@ Same as `/history`: `device_id`, `hours` (1–168), `limit` (1–5000), `offset`
 - `Content-Disposition: attachment; filename=farmshield_export.csv`
 
 ```csv
-time,device_id,soil_pct,ph,tds_ppm,temp_c,humidity_pct,rain_raw,motion,npk_n,npk_p,npk_k,leaf_r,leaf_g,leaf_b,pump_on
-2026-04-27T17:40:38+00:00,farmshield_node1,42.5,6.81,410.0,29.1,58.0,3200,False,45,30,60,80,140,60,False
+time,device_id,soil_pct,tds_ppm,temp_c,humidity_pct,rain_raw,motion,npk_n,npk_p,npk_k,leaf_r,leaf_g,leaf_b,pump_on
+2026-04-27T17:40:38+00:00,farmshield_node1,42.5,410.0,29.1,58.0,3200,False,45,30,60,80,140,60,False
 ```
 
 **Example download:**
@@ -239,8 +239,7 @@ Returns threshold-generated alerts, newest first.
 | `SOIL_DRY` | `WARNING` | `soil_pct < ALERT_SOIL_DRY_PCT` (default 30%) |
 | `SOIL_FLOOD` | `WARNING` | `soil_pct > ALERT_SOIL_FLOOD_PCT` (default 85%) |
 | `TEMP_HIGH` | `WARNING` | `temp_c > ALERT_TEMP_HIGH_C` (default 38°C) |
-| `PH_LOW` | `WARNING` | `ph < ALERT_PH_LOW` (default 5.5) |
-| `PH_HIGH` | `WARNING` | `ph > ALERT_PH_HIGH` (default 7.5) |
+
 | `TDS_HIGH` | `WARNING` | `tds_ppm > ALERT_TDS_HIGH_PPM` (default 1500) |
 | `RAIN_DRY` | `INFO` | `rain_raw > ALERT_RAIN_DRY_RAW` (default 2500) |
 | `MOTION` | `INFO` | `motion == true` |
@@ -396,7 +395,7 @@ ws://localhost:8000/api/v1/ws/live?api_key=<API_KEY>
     "time": "2026-04-27T17:40:38.720815Z",
     "device_id": "farmshield_node1",
     "soil_pct": 42.5,
-    "ph": 6.81,
+
     "tds_ppm": 410.0,
     "temp_c": 29.1,
     "humidity_pct": 58.0,

@@ -38,7 +38,6 @@ class SensorReading(Base):
 
     # Sensor fields — all nullable to tolerate individual sensor failures
     soil_pct: Mapped[float | None] = mapped_column(Double, nullable=True)
-    ph: Mapped[float | None] = mapped_column(Double, nullable=True)
     tds_ppm: Mapped[float | None] = mapped_column(Double, nullable=True)
     temp_c: Mapped[float | None] = mapped_column(Double, nullable=True)
     humidity_pct: Mapped[float | None] = mapped_column(Double, nullable=True)

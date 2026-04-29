@@ -9,8 +9,8 @@ export default defineConfig({
     open: true,
   },
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify('http://localhost:8000'),
-    'import.meta.env.VITE_API_KEY': JSON.stringify(''),
-    'import.meta.env.VITE_DEMO_MODE': JSON.stringify('false'),
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || ''),
+    'import.meta.env.VITE_API_KEY': JSON.stringify(process.env.VITE_API_KEY || ''),
+    'import.meta.env.VITE_DEMO_MODE': JSON.stringify(process.env.VITE_DEMO_MODE || 'false'),
   },
 })

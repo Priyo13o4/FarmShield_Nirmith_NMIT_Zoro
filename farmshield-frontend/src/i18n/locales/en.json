@@ -14,7 +14,6 @@
   },
   "sensors": {
     "soil": "Soil Moisture",
-    "ph": "pH Level",
     "tds": "Water TDS",
     "temp": "Temperature",
     "humidity": "Humidity",
@@ -26,7 +25,6 @@
     "leafColor": "Leaf Health",
     "units": {
       "percent": "%",
-      "ph": "pH",
       "ppm": "ppm",
       "celsius": "°C",
       "rain": "mm",

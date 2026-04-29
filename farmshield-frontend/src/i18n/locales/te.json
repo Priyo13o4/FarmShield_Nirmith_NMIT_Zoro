@@ -14,7 +14,6 @@
   },
   "sensors": {
     "soil": "మట్టి తేమ",
-    "ph": "pH స్థాయి",
     "tds": "నీటి TDS",
     "temp": "ఉష్ణోగ్రత",
     "humidity": "ఆర్ద్రత",
@@ -26,7 +25,6 @@
     "leafColor": "ఆకు ఆరోగ్యం",
     "units": {
       "percent": "%",
-      "ph": "pH",
       "ppm": "ppm",
       "celsius": "°C",
       "rain": "మిమీ",

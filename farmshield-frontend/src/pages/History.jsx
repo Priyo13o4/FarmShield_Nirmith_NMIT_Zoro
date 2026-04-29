@@ -13,7 +13,7 @@ const RANGE_OPTIONS = [
   { key: '7d', hours: 168 },
 ]
 
-const SENSOR_OPTIONS = ['soilPct', 'tempC', 'humidityPct', 'ph', 'tdsPpm', 'rainMm']
+const SENSOR_OPTIONS = ['soilPct', 'tempC', 'humidityPct', 'tdsPpm', 'rainMm']
 const MAX_SELECTED_SENSORS = 3
 const HISTORY_LIMIT = 160
 

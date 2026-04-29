@@ -20,7 +20,7 @@ def _make_reading(**overrides) -> SensorReading:
         "time": datetime(2026, 4, 26, 12, 0, 0, tzinfo=timezone.utc),
         "device_id": "esp32-node-1",
         "soil_pct": 42.5,
-        "ph": 6.81,
+
         "tds_ppm": 410.0,
         "temp_c": 29.1,
         "humidity_pct": 58.0,

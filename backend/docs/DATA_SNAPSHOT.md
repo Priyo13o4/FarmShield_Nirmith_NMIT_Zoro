@@ -16,7 +16,7 @@ This is the raw JSON structure published by the ESP32 to the `farmshield/data` M
   "humidity": 45.0,
   "soil": 11.9,
   "tds": 0.0,
-  "ph": 14.0,
+
   "rain": 4095,
   "motion": true,
   "color": {
@@ -32,7 +32,7 @@ This is the raw JSON structure published by the ESP32 to the `farmshield/data` M
   },
   "pump": true,
   "mode": "AUTO",
-  "alert": "Soil pH out of range",
+  "alert": "Water TDS too high",
   "uptime_s": 334
 }
 ```
@@ -47,7 +47,7 @@ Here is an actual live row pulled from the database:
 | `time` | TIMESTAMPTZ | `2026-04-28 18:30:09` | Primary index (Time-series). Use for temporal features (hour_of_day). |
 | `device_id` | TEXT | `farmshield_node1` | Categorical feature if training across multiple nodes. |
 | `soil_pct` | FLOAT8 | `11.93888` | Soil Moisture %. Extremely critical for irrigation models. |
-| `ph` | FLOAT8 | `14.0` | Soil/Water pH. (Note: A value of 14 indicates sensor needs calibration/is disconnected). |
+
 | `tds_ppm` | FLOAT8 | `0.0` | Total Dissolved Solids. Indicator of nutrient concentration. |
 | `temp_c` | FLOAT8 | `33.8` | Ambient Temperature in Celsius. |
 | `humidity_pct`| FLOAT8 | `45.0` | Ambient Humidity %. |
@@ -80,7 +80,7 @@ For an **Irrigation Prediction Model**, your feature vector `X` should look like
 `[soil_pct, temp_c, humidity_pct, rain_raw]`
 
 For a **Crop Health / Fertilizer Model**, your feature vector `X` should look like this:
-`[ph, tds_ppm, npk_n, npk_p, npk_k, leaf_r_norm, leaf_g_norm, leaf_b_norm]`
+`[tds_ppm, npk_n, npk_p, npk_k, leaf_r_norm, leaf_g_norm, leaf_b_norm]`
 
 ### Field Name Mapping Reference
 If you interact with the REST API instead of the raw database, remember that the backend serializes the data with frontend-friendly aliases:

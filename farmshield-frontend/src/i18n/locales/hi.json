@@ -14,7 +14,6 @@
   },
   "sensors": {
     "soil": "मिट्टी की नमी",
-    "ph": "pH स्तर",
     "tds": "पानी का TDS",
     "temp": "तापमान",
     "humidity": "आर्द्रता",
@@ -26,7 +25,6 @@
     "leafColor": "पत्ती स्वास्थ्य",
     "units": {
       "percent": "%",
-      "ph": "pH",
       "ppm": "ppm",
       "celsius": "°C",
       "rain": "मिमी",

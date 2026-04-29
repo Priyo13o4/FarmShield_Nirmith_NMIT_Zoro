@@ -104,14 +104,14 @@ async def export_csv_data(
 
     # Header row
     writer.writerow([
-        "time", "device_id", "soil_pct", "ph", "tds_ppm", "temp_c",
+        "time", "device_id", "soil_pct", "tds_ppm", "temp_c",
         "humidity_pct", "rain_raw", "motion", "npk_n", "npk_p", "npk_k",
         "leaf_r", "leaf_g", "leaf_b", "pump_on",
     ])
 
     for r in readings:
         writer.writerow([
-            r.time.isoformat(), r.device_id, r.soil_pct, r.ph, r.tds_ppm,
+            r.time.isoformat(), r.device_id, r.soil_pct, r.tds_ppm,
             r.temp_c, r.humidity_pct, r.rain_raw, r.motion, r.npk_n,
             r.npk_p, r.npk_k, r.leaf_r, r.leaf_g, r.leaf_b, r.pump_on,
         ])

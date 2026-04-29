@@ -90,7 +90,7 @@ class RagTool:
             """
             Search the FarmShield agricultural knowledge base for general farming
             information. Use for questions about crop care, soil science, irrigation
-            best practices, NPK nutrients, pH recommendations, and pest management.
+            best practices, NPK nutrients, and pest management.
             Do NOT use for current sensor readings — use the SQL tools for that.
             Input: a natural language question about farming or agriculture.
             Output: relevant text excerpts from the knowledge base.

@@ -3,10 +3,6 @@ const SENSOR_THRESHOLDS = {
     criticalBelow: 30,
     warningAbove: 85,
   },
-  ph: {
-    warningBelow: 5.5,
-    warningAbove: 7.5,
-  },
   tdsPpm: {
     warningAbove: 1500,
   },
@@ -34,15 +30,6 @@ export function getSensorStatus(key, value) {
     return 'ok'
   }
 
-  if (key === 'ph') {
-    if (
-      value < SENSOR_THRESHOLDS.ph.warningBelow ||
-      value > SENSOR_THRESHOLDS.ph.warningAbove
-    ) {
-      return 'warning'
-    }
-    return 'ok'
-  }
 
   if (key === 'tdsPpm') {
     return value > SENSOR_THRESHOLDS.tdsPpm.warningAbove ? 'warning' : 'ok'

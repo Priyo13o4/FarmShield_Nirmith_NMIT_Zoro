@@ -43,7 +43,6 @@ class SensorPayload(BaseModel):
     humidity_pct: float | None = Field(default=None, alias="humidity")
     soil_pct: float | None = Field(default=None, alias="soil")
     tds_ppm: float | None = Field(default=None, alias="tds")
-    ph: float | None = None                   # same name in firmware and DB
     rain_raw: int | None = Field(default=None, alias="rain")
     motion: bool | None = None                # same name in firmware and DB
 
@@ -112,7 +111,6 @@ class SensorPayload(BaseModel):
         """
         numeric_fields = [
             self.soil_pct,
-            self.ph,
             self.tds_ppm,
             self.temp_c,
             self.humidity_pct,
@@ -124,7 +122,7 @@ class SensorPayload(BaseModel):
         if not any(v is not None for v in numeric_fields):
             raise ValueError(
                 "Payload rejected: all numeric sensor fields are None. "
-                "At least one of soil_pct, ph, tds_ppm, temp_c, humidity_pct, "
+                "At least one of soil_pct, tds_ppm, temp_c, humidity_pct, "
                 "rain_raw, npk_n, npk_p, npk_k must be present."
             )
         return self
@@ -140,7 +138,6 @@ class SensorReadingOut(BaseModel):
     time: datetime
     device_id: str = Field(serialization_alias="deviceid")
     soil_pct: float | None = Field(default=None, serialization_alias="soilpct")
-    ph: float | None = None
     tds_ppm: float | None = Field(default=None, serialization_alias="tdsppm")
     temp_c: float | None = Field(default=None, serialization_alias="tempc")
     humidity_pct: float | None = Field(default=None, serialization_alias="humiditypct")

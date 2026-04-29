@@ -239,7 +239,7 @@ curl http://localhost:8000/api/v1/health
 docker exec farmshield-mosquitto mosquitto_pub \
   -h localhost -u farmshield -P farmshield123 \
   -t farmshield/data -q 1 \
-  -m '{"device":"farmshield_node1","temperature":29.1,"humidity":58.0,"soil":42.5,"tds":410.0,"ph":6.81,"rain":3200,"motion":false,"color":{"r":80,"g":140,"b":60},"npk":{"n":45,"p":30,"k":60,"ok":true},"pump":false,"mode":"AUTO","alert":"","uptime_s":100}'
+  -m '{"device":"farmshield_node1","temperature":29.1,"humidity":58.0,"soil":42.5,"tds":410.0,"rain":3200,"motion":false,"color":{"r":80,"g":140,"b":60},"npk":{"n":45,"p":30,"k":60,"ok":true},"pump":false,"mode":"AUTO","alert":"","uptime_s":100}'
 
 # 4. Confirm reading in DB
 docker exec farmshield-timescaledb psql -U farmshield -d farmshield \

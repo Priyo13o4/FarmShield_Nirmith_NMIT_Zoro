@@ -72,7 +72,6 @@ function toUiSensorShape(data) {
   return {
     ...data,
     soilPct: data.soilPct ?? data.soilpct ?? data.soil ?? data.soilMoisturePct,
-    ph: data.ph,
     tdsPpm: data.tdsPpm ?? data.tdsppm ?? data.tds,
     tempC: data.tempC ?? data.tempc ?? data.temperature ?? data.temperatureC,
     humidityPct: data.humidityPct ?? data.humiditypct ?? data.humidity,

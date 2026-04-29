@@ -760,7 +760,7 @@ All endpoints are prefixed with `/api/v1/`. Full reference in `API_REFERENCE.md`
 | `time` | TIMESTAMPTZ | false | Partition column (hypertable) |
 | `device_id` | TEXT | false | ESP32 device identifier |
 | `soil_pct` | DOUBLE PRECISION | true | Soil moisture 0–100% |
-| `ph` | DOUBLE PRECISION | true | pH value 0–14 |
+
 | `tds_ppm` | DOUBLE PRECISION | true | Total dissolved solids |
 | `temp_c` | DOUBLE PRECISION | true | Air temperature |
 | `humidity_pct` | DOUBLE PRECISION | true | Relative humidity |

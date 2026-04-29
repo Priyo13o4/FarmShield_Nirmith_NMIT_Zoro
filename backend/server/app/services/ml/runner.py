@@ -110,7 +110,7 @@ class MLRunner:
 
         # Build feature vector in the expected order
         feature_order = [
-            "soil_pct", "ph", "tds_ppm", "temp_c", "humidity_pct",
+            "soil_pct", "tds_ppm", "temp_c", "humidity_pct",
             "rain_raw", "npk_n", "npk_p", "npk_k",
             "leaf_r", "leaf_g", "leaf_b",
         ]
@@ -133,7 +133,7 @@ class MLRunner:
         import numpy as np
 
         feature_order = [
-            "soil_pct", "ph", "tds_ppm", "temp_c", "humidity_pct",
+            "soil_pct", "tds_ppm", "temp_c", "humidity_pct",
             "rain_raw", "npk_n", "npk_p", "npk_k",
             "leaf_r", "leaf_g", "leaf_b",
         ]
