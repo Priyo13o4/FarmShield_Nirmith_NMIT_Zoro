@@ -18,7 +18,7 @@ const MAX_SELECTED_SENSORS = 3
 const HISTORY_LIMIT = 160
 
 function normalizeHistoryRows(payload) {
-  const rows = Array.isArray(payload) ? payload : payload?.data || payload?.items || []
+  const rows = Array.isArray(payload) ? payload : payload?.data || payload?.readings || payload?.items || []
   return rows.map((item) => {
     const timestamp = item.timestamp || item.createdAt || new Date().toISOString()
     return {
