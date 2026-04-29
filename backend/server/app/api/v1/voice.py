@@ -66,7 +66,16 @@ async def voice_websocket(
         role = "User" if msg.__class__.__name__ == "HumanMessage" else "FarmShield Assistant"
         history_text += f"{role}: {msg.content}\\n"
     
-    full_system_instruction = system_prompt + "\\n\\n" + history_text
+    # Override Rule 1 & 2 from SYSTEM_PROMPT for Voice mode (suppress thought narration)
+    voice_system_prompt = system_prompt.replace(
+        "1. ALWAYS start your response with your internal thought process wrapped in `<thought>` tags.",
+        "1. NEVER use <thought> tags or narrate your internal reasoning."
+    ).replace(
+        "2. Always think step by step before using any tool. Explain your plan clearly in the thought block.",
+        "2. Just perform tool calls silently without explaining your plan."
+    )
+    
+    full_system_instruction = voice_system_prompt + "\n\nIMPORTANT: You are in VOICE MODE. Speak concisely and never narrate tool calls." + "\n\n" + history_text
     
     config = types.LiveConnectConfig(
         response_modalities=["AUDIO"],
